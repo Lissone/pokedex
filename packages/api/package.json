@@ -1,0 +1,38 @@
+{
+  "name": "pokedex-api",
+  "version": "1.0.0",
+  "description": "Pokedex api",
+  "main": "src/external/server.ts",
+  "repository": "https://github.com/Lissone/pokedex.git",
+  "author": "Leonardo Dias Lissone Santomero",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node -r ts-node/register/transpile-only -r dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules ."
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.0",
+    "@types/cors": "^2.8.10",
+    "@types/express": "^4.17.12",
+    "@types/node": "^15.12.5",
+    "@typescript-eslint/eslint-plugin": "^4.28.1",
+    "@typescript-eslint/parser": "^4.28.1",
+    "eslint": "7.12.1",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "4.2.1",
+    "ts-node": "^10.0.0",
+    "ts-node-dev": "^1.1.7",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.3.5"
+  }
+}
