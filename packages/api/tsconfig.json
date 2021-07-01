@@ -22,11 +22,10 @@
     "baseUrl": ".",
     "paths": {
       "@external/*": ["src/external/*"],
-      "@entities/*": ["src/entities/*"],
       "@controllers/*": ["src/adapters/controllers/*"],
       "@repositories/*": ["src/adapters/repositories/*"],
-      "@useCases/*": ["./src/useCases/*"],
-      "@shared/*": ["src/shared/*"],
+      "@middlewares/*": ["src/adapters/middlewares/*"],
+      "@useCases/*": ["src/useCases/*"],
     }
   }
 }

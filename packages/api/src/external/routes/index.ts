@@ -1,9 +1,9 @@
 import { Router } from 'express'
 
-import { loginRoutes } from './loginRoute'
+import { userRoutes } from './userRoutes'
 
 const apiRoutes = Router()
 
-apiRoutes.use('/api/v1/login', loginRoutes)
+apiRoutes.use('/api/v1/user', userRoutes)
 
 export { apiRoutes }
