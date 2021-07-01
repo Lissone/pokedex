@@ -1,0 +1,12 @@
+{
+  "name": "pokedex",
+  "version": "1.0.0",
+  "description": "Web pokedex by Lissone",
+  "repository": "https://github.com/Lissone/pokedex.git",
+  "author": "Leonardo Dias Lissone Santomero",
+  "license": "MIT",
+  "private": false,
+  "workspaces": [
+    "packages/*"
+  ]
+}
