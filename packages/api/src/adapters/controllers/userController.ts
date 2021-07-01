@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
-import bcrypt from 'bcryptjs'
 import { v4 as uuidv4 } from 'uuid'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
 import { IUserRepository } from '@useCases/IUserRepository'
 
@@ -13,6 +14,8 @@ class UserController {
 
   async authenticate (req: Request, res: Response) : Promise<void> {
     try {
+      const secretKey = process.env.SECRET_KEY
+
       const { email, password } = req.body
 
       if (!email || !password) {
@@ -32,7 +35,15 @@ class UserController {
         return
       }
 
-      res.status(200).json({ user })
+      const token = jwt.sign({
+        id: user.uid,
+        email: user.email,
+        password: user.password
+      }, secretKey!, {
+        expiresIn: 86400 // 24 hours
+      })
+
+      res.status(200).json({ user, token })
     } catch (err) {
       res.status(500).send({ message: err.message })
     }

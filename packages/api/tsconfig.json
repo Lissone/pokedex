@@ -24,6 +24,7 @@
       "@external/*": ["src/external/*"],
       "@controllers/*": ["src/adapters/controllers/*"],
       "@repositories/*": ["src/adapters/repositories/*"],
+      "@middlewares/*": ["src/adapters/middlewares/*"],
       "@useCases/*": ["src/useCases/*"],
     }
   }
