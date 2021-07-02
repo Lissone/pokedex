@@ -8,11 +8,6 @@ interface IAbility {
   url: string
 }
 
-interface IEvolutions {
-  id: string
-  name: string
-}
-
 interface IPokemon {
   id: string
   name: string
@@ -21,7 +16,7 @@ interface IPokemon {
   weight: string
   types: IType[]
   abilities: IAbility[]
-  evolutions?: IEvolutions[] | undefined
+  evolutions?: IPokemon[] | null
 }
 
 interface IPokemonsList {
@@ -37,7 +32,8 @@ interface IListingConfig {
 
 interface IPokemonRepository {
   getAll(config: IListingConfig) : Promise<IPokemonsList>
-  getOne(name: string) : Promise<IPokemon | undefined>
+  getOne(name: string, singleConsult: boolean) : Promise<IPokemon | undefined>
+  getAllEvolutions (id: string) : Promise<IPokemon[] | undefined>
 }
 
 export { IPokemonsList, IPokemon, IPokemonRepository }

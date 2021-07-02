@@ -28,7 +28,7 @@ class PokemonController {
     try {
       const { id } = req.params
 
-      const pokemon = await this.repository.getOne(id)
+      const pokemon = await this.repository.getOne(id, true)
 
       if (pokemon === undefined) {
         res.status(500).send({ message: 'Pokemon not found' })
