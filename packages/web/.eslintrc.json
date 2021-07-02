@@ -1,0 +1,59 @@
+{
+	"env": {
+		"browser": true,
+		"es2021": true,
+		"node": true
+	},
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+	"extends": [
+		"plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+		"airbnb",
+    "eslint-config-prettier",
+    "prettier"
+	],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaFeatures": {
+			"jsx": true
+		},
+		"ecmaVersion": 12,
+		"sourceType": "module"
+	},
+	"plugins": [
+		"react",
+    "@typescript-eslint",
+    "prettier"
+	],
+	"rules": {
+    "prettier/prettier": "error",
+		"semi": [2, "never"],
+		"no-use-before-define": "off",
+		"react/jsx-filename-extension": [ "warn", {"extensions": [".tsx"]} ],
+		"@typescript-eslint/no-use-before-define": ["error"],
+		"react/jsx-props-no-spreading": "off",
+		"react/react-in-jsx-scope": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "jsx-a11y/anchor-is-valid": 0,
+    "jsx-a11y/control-has-associated-label": "error",
+    "no-unused-vars": "off",
+    "import/prefer-default-export": "off",
+    "jsx-a11y/media-has-caption": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+   ]
+	}
+}
