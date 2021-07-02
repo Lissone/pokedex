@@ -30,8 +30,13 @@ interface IPokemonsList {
   pokemons: IPokemon[]
 }
 
+interface IListingConfig {
+  offset: string | undefined
+  limit: string | undefined
+}
+
 interface IPokemonRepository {
-  getAll() : Promise<IPokemonsList>
+  getAll(config: IListingConfig) : Promise<IPokemonsList>
   getOne(name: string) : Promise<IPokemon | undefined>
 }
 

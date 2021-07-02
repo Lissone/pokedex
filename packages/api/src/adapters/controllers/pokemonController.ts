@@ -11,7 +11,12 @@ class PokemonController {
 
   async getAllPokemons (req: Request, res: Response) : Promise<void> {
     try {
-      const pokemons = await this.repository.getAll()
+      const { offset, limit } = req.query
+
+      const pokemons = await this.repository.getAll({
+        offset: String(offset),
+        limit: String(limit)
+      })
 
       res.status(200).json(pokemons)
     } catch (err) {

@@ -3,14 +3,14 @@ import { api } from '@external/services/pokeApi'
 import { IPokemonRepository, IPokemonsList, IPokemon } from '@useCases/IPokemonRepository'
 
 class PokemonRepository implements IPokemonRepository {
-  async getAll () : Promise<IPokemonsList> {
-    const response = await api.get('/pokemon')
+  async getAll ({ offset, limit }) : Promise<IPokemonsList> {
+    const response = await api.get(`/pokemon/?offset=${offset}&limit=${limit}`)
 
     const { data } = response
 
     const pokemonsList: IPokemonsList = {
-      nextPage: data.next,
-      previousPage: data.previous,
+      nextPage: data.next !== null ? `?${data.next.split('?')[1]}` : null,
+      previousPage: data.previous !== null ? `?${data.previous.split('?')[1]}` : null,
       pokemons: await Promise.all<IPokemon>(
         data.results.map(async (pokemon) => await this.getOne(pokemon.name))
       )
