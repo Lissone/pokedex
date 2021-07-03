@@ -32,6 +32,7 @@
     "prettier"
 	],
 	"rules": {
+    "react/require-default-props": 0,
     "prettier/prettier": "error",
 		"semi": [2, "never"],
 		"no-use-before-define": "off",

@@ -36,17 +36,17 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
-
   body {
     background: var(--gray-700);
   }
 
   body, input, textarea, button {
     font: 400 1rem Poppins, sans-serif;
+    border: 0;
     color: var(--white);
   }
 
-h3, h4, h5, h6 {
+  h3, h4, h5, h6 {
     font-weight: 500;
     color: var(--white);
   }
@@ -63,7 +63,8 @@ h3, h4, h5, h6 {
     color: var(--white);
   }
 
-  button {
+  button, a {
+    text-decoration: none;
     cursor: pointer;
   }
 `
