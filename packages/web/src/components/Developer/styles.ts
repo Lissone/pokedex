@@ -87,7 +87,7 @@ export const IconLink = styled.a`
   justify-content: center;
   align-items: center;
 
-  background: var(--gray-700);
+  background: var(--blue-900);
 
   border-radius: 6.25rem;
 

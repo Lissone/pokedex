@@ -7,11 +7,11 @@ import { Developer } from '../components/Developer'
 
 import { Container, Content, Divider } from '../styles/loginRegister'
 
-export default function Login() {
+export default function Register() {
   return (
     <>
       <Head>
-        <title>Pokedex</title>
+        <title>Cadastro - Pokedex</title>
       </Head>
 
       <Container>
@@ -19,7 +19,7 @@ export default function Login() {
           <header>
             <img src="/images/logo.png" alt="Pokedex" />
 
-            <span>Inicie seu conhecimento pokémon</span>
+            <span>Se inscreva para ter acesso a pokedex</span>
           </header>
 
           <form>
@@ -33,15 +33,17 @@ export default function Login() {
               <div />
             </Divider>
 
+            <Input placeholder="Nome" type="text" />
             <Input placeholder="E-mail" type="email" />
             <Input placeholder="Senha" type="password" />
+            <Input placeholder="Confirme sua senha" type="password" />
 
-            <Button type="button" title="Entrar">
-              <img src="/images/log-in.svg" alt="Login" />
+            <Button type="button" title="Cadastrar">
+              <img src="/images/register.svg" alt="Cadastro" />
             </Button>
 
             <span>
-              Não tem uma conta? <a href="#">Cadastrar</a>
+              Você já tem uma conta? <a href="#">Entrar</a>
             </span>
           </form>
 

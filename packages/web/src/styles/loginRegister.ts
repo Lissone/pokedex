@@ -51,7 +51,10 @@ export const Content = styled.div`
 
     input + input {
       margin-top: 0.5rem;
-      margin-bottom: 1rem;
+    }
+
+    input + button {
+      margin-top: 1rem;
     }
 
     > span {
