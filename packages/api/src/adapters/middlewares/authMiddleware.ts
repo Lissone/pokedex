@@ -22,9 +22,15 @@ function AuthMiddleware (req: Request, res: Response, next: NextFunction) {
     return res.status(401).json({ error: 'Token malformed' })
   }
 
-  jwt.verify(token, secretKey!, (err) => {
+  jwt.verify(token, secretKey!, (err, decoded) => {
     if (err) {
       return res.status(401).json({ error: 'Token invalid' })
+    }
+
+    req.body.userDecoded = {
+      uid: decoded?.uid,
+      name: decoded?.name,
+      email: decoded?.email
     }
 
     return next()

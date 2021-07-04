@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 
 import { IPokemonRepository } from '@useCases/IPokemonRepository'
+import { UserRepository } from '@repositories/userRepository'
 
 class PokemonController {
   repository: IPokemonRepository
@@ -12,8 +13,17 @@ class PokemonController {
   async getAllPokemons (req: Request, res: Response) : Promise<void> {
     try {
       const { offset, limit } = req.query
+      const { userDecoded } = req.body
 
-      const pokemons = await this.repository.getAll({
+      const userRepository = new UserRepository()
+      const user = await userRepository.getOne(userDecoded.email)
+
+      if (user == null) {
+        res.status(401).json({ error: 'Token invalid' })
+        return
+      }
+
+      const pokemons = await this.repository.getAll(user, {
         offset: String(offset),
         limit: String(limit)
       })
@@ -27,8 +37,9 @@ class PokemonController {
   async getOnePokemon (req: Request, res: Response) : Promise<void> {
     try {
       const { id } = req.params
+      const { userDecoded } = req.body
 
-      const pokemon = await this.repository.getOne(id, true)
+      const pokemon = await this.repository.getOne(id, userDecoded, true)
 
       if (pokemon === undefined) {
         res.status(500).send({ message: 'Pokemon not found' })

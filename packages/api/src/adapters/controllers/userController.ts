@@ -36,9 +36,9 @@ class UserController {
       }
 
       const token = jwt.sign({
-        id: user.uid,
-        email: user.email,
-        password: user.password
+        uid: user.uid,
+        name: user.name,
+        email: user.email
       }, secretKey!, {
         expiresIn: 86400 // 24 hours
       })
@@ -62,12 +62,31 @@ class UserController {
 
       const hash = await bcrypt.hash(password, 5)
 
-      const response = await this.repository.create({
+      const response = await this.repository.save({
         ...req.body,
         uid: uuidv4(),
         password: hash,
         createdAt: new Date()
       })
+
+      res.status(201).json({ user: response })
+    } catch (err) {
+      res.status(500).send({ message: err.message })
+    }
+  }
+
+  async update (req: Request, res: Response) : Promise<void> {
+    try {
+      const { user } = req.body
+
+      const userExists = await this.repository.getOne(user.email)
+
+      if (userExists == null) {
+        res.status(404).send({ message: 'User not found' })
+        return
+      }
+
+      const response = await this.repository.save(user)
 
       res.status(201).json({ user: response })
     } catch (err) {
