@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import * as Yup from 'yup'
 import { parseCookies } from 'nookies'
 import { AiFillGithub } from 'react-icons/ai'
+import { toast } from 'react-toastify'
 
 import { Button } from '../components/Button'
 import { Input } from '../components/Input'
@@ -31,7 +32,7 @@ export default function Register() {
   const formRef = useRef(null)
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(data: SignUpData) {
+  async function handleSubmit(data: SignUpData, { reset }) {
     try {
       setLoading(true)
 
@@ -65,6 +66,8 @@ export default function Register() {
 
       formRef.current.setErrors({})
     } catch (err) {
+      err.name = ''
+      reset()
       setLoading(false)
 
       if (err instanceof Yup.ValidationError) {
@@ -75,6 +78,10 @@ export default function Register() {
         })
 
         formRef.current.setErrors(errorMessages)
+      } else {
+        toast.error(err.toString(), {
+          hideProgressBar: true
+        })
       }
     }
   }

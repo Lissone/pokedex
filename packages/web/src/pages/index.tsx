@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import * as Yup from 'yup'
 import { parseCookies } from 'nookies'
 import { AiFillGithub } from 'react-icons/ai'
+import { toast } from 'react-toastify'
 
 import { useAuth } from '../hooks/useAuth'
 import { Button } from '../components/Button'
@@ -29,7 +30,7 @@ export default function Login() {
   const formRef = useRef(null)
   const [loading, setLoading] = useState(false)
 
-  async function handleSubmit(data: SignInData) {
+  async function handleSubmit(data: SignInData, { reset }) {
     try {
       setLoading(true)
 
@@ -52,6 +53,8 @@ export default function Login() {
 
       formRef.current.setErrors({})
     } catch (err) {
+      reset()
+      err.name = ''
       setLoading(false)
 
       if (err instanceof Yup.ValidationError) {
@@ -62,6 +65,10 @@ export default function Login() {
         })
 
         formRef.current.setErrors(errorMessages)
+      } else {
+        toast.error(err.toString(), {
+          hideProgressBar: true
+        })
       }
     }
   }

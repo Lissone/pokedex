@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { parseCookies } from 'nookies'
 import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
 
 import { api } from '../services/api'
 import { useAuth } from '../hooks/useAuth'
@@ -58,12 +59,19 @@ export default function Home() {
 
     setLoading(true)
 
-    api.get(`/pokemon/${page}`).then(({ data }) => {
-      setLoading(false)
+    api
+      .get(`/pokemon/${page}`)
+      .then(({ data }) => {
+        setLoading(false)
 
-      setPage(data.nextPage)
-      savePokemons([...pokemons, ...data.pokemons])
-    })
+        setPage(data.nextPage)
+        savePokemons([...pokemons, ...data.pokemons])
+      })
+      .catch(() => {
+        toast.error('Ocorreu um erro inesperado', {
+          hideProgressBar: true
+        })
+      })
   }
 
   function handleClickPokemonAvatar() {

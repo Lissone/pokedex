@@ -1,5 +1,7 @@
 import { createGlobalStyle } from 'styled-components'
 
+import 'react-toastify/dist/ReactToastify.css'
+
 export const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
@@ -88,5 +90,9 @@ export const GlobalStyle = createGlobalStyle`
   button, a {
     text-decoration: none;
     cursor: pointer;
+  }
+
+  .Toastify__toast-container {
+    width: 30%;
   }
 `
