@@ -33,6 +33,17 @@ export default function Home() {
   async function loadPokemons() {
     setLoading(true)
 
+    const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
+
+    if (storagedListPokemons) {
+      const storageParsed = JSON.parse(storagedListPokemons)
+
+      setPokemons(storageParsed.pokemons)
+      setPage(storageParsed.nextPage)
+      setLoading(false)
+      return
+    }
+
     const url = `/pokemon/${page}`
     const { data } = await api.get(url)
 
@@ -59,6 +70,11 @@ export default function Home() {
       setPage(data.nextPage)
 
       setPokemons([...pokemons, ...data.pokemons])
+
+      localStorage.setItem(
+        '@Pokedex:pokemons',
+        JSON.stringify({ nextPage: page, pokemons })
+      )
     })
   }
 
