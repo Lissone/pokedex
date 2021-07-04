@@ -5,11 +5,12 @@ import { parseCookies } from 'nookies'
 import { useRouter } from 'next/router'
 
 import { api } from '../services/api'
-import { useAuth, User } from '../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth'
+import { usePokemons } from '../hooks/usePokemons'
 
 import { Header } from '../components/Header'
 import { FavoritePokemon } from '../components/FavoritePokemon'
-import { Pokemon, PokemonCard } from '../components/PokemonCard'
+import { PokemonCard } from '../components/PokemonCard'
 import { Load } from '../components/Load'
 
 import {
@@ -23,23 +24,16 @@ import {
 
 export default function Home() {
   const router = useRouter()
-  const { user, setUser } = useAuth()
+  const { user } = useAuth()
+  const { pokemons, savePokemons, page, setPage, handleLike } = usePokemons()
 
   const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState<string | null>('?offset=0&limit=20')
   const [search, setSearch] = useState('')
-  const [pokemons, setPokemons] = useState<Pokemon[]>([])
 
   async function loadPokemons() {
     setLoading(true)
 
-    const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
-
-    if (storagedListPokemons) {
-      const storageParsed = JSON.parse(storagedListPokemons)
-
-      setPokemons(storageParsed.pokemons)
-      setPage(storageParsed.nextPage)
+    if (pokemons) {
       setLoading(false)
       return
     }
@@ -50,14 +44,14 @@ export default function Home() {
     setLoading(false)
 
     setPage(data.nextPage)
-    setPokemons(data.pokemons)
+    savePokemons(data.pokemons)
   }
 
   useEffect(() => {
     loadPokemons()
   }, [])
 
-  function morePokemons() {
+  function handleMorePokemons() {
     if (page === null) {
       return
     }
@@ -68,41 +62,8 @@ export default function Home() {
       setLoading(false)
 
       setPage(data.nextPage)
-
-      setPokemons([...pokemons, ...data.pokemons])
-
-      localStorage.setItem(
-        '@Pokedex:pokemons',
-        JSON.stringify({ nextPage: page, pokemons })
-      )
+      savePokemons([...pokemons, ...data.pokemons])
     })
-  }
-
-  function handleLike(pokemon: Pokemon) {
-    const pokemonsUpdated = pokemons.map(item =>
-      item.id === pokemon.id ? { ...item, isLiked: !pokemon.isLiked } : item
-    )
-
-    const pokemonUpdated = pokemonsUpdated.filter(
-      item => item.id === pokemon.id
-    )
-
-    const newUser: User = {
-      uid: user.uid,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      createdAt: user.createdAt,
-      pokemonsLiked: pokemonUpdated[0].isLiked
-        ? [...user.pokemonsLiked, pokemonUpdated[0]]
-        : user.pokemonsLiked.filter(
-            pokemonLiked => pokemonLiked.id !== pokemonUpdated[0].id
-          )
-    }
-
-    setPokemons(pokemonsUpdated)
-
-    api.put('/user/', { user: newUser }).then(({ data }) => setUser(data.user))
   }
 
   function handleClickPokemonAvatar() {
@@ -171,7 +132,7 @@ export default function Home() {
 
               {!loading && (
                 <FooterContent>
-                  <MorePokemons onClick={morePokemons}>
+                  <MorePokemons onClick={handleMorePokemons}>
                     <span>Carregar mais pokemons</span>
                   </MorePokemons>
                 </FooterContent>

@@ -3,9 +3,8 @@ import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import { parseCookies } from 'nookies'
 
-import { api } from '../../services/api'
 import { getApiClient } from '../../services/axios'
-import { useAuth, User } from '../../hooks/useAuth'
+import { usePokemons } from '../../hooks/usePokemons'
 
 import { Header } from '../../components/Header'
 import { LikeButton } from '../../components/LikeButton'
@@ -33,7 +32,7 @@ interface PokemonDetailsProps {
 }
 
 export default function PokemonDetails({ data }: PokemonDetailsProps) {
-  const { user, setUser } = useAuth()
+  const { handleLike } = usePokemons()
 
   const [pokemon, setPokemon] = useState(data)
 
@@ -46,27 +45,12 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
     l.toUpperCase()
   )
 
-  function handleLike(item: Pokemon) {
+  function handleClickLike(item: Pokemon) {
     const pokemonUpdated = { ...item, isLiked: !pokemon.isLiked }
-
-    const newUser: User = {
-      uid: user.uid,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      createdAt: user.createdAt,
-      pokemonsLiked: pokemonUpdated.isLiked
-        ? [...user.pokemonsLiked, pokemonUpdated]
-        : user.pokemonsLiked.filter(
-            pokemonLiked => pokemonLiked.id !== pokemonUpdated.id
-          )
-    }
 
     setPokemon(pokemonUpdated)
 
-    api
-      .put('/user/', { user: newUser })
-      .then(response => setUser(response.data.user))
+    handleLike(item)
   }
 
   return (
@@ -83,7 +67,7 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
             <LikeButton
               className="like-button"
               pokemon={pokemon}
-              handleLike={() => handleLike(pokemon)}
+              handleLike={() => handleClickLike(pokemon)}
             />
           </header>
 

@@ -66,10 +66,10 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
       const { exp } = await jwt.verify(data.token, secretKey)
 
-      const tokeExpire = new Date(exp * 1000)
+      const tokenExpire = new Date(exp * 1000)
 
       await setCookie(undefined, '@Pokedex/token', data.token, {
-        expires: tokeExpire
+        expires: tokenExpire
       })
 
       setUser(data.user)
