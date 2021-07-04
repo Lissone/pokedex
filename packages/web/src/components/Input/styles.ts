@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 
-interface ContainerProps {
+interface InputContainerProps {
   color: string
 }
 
-export const Container = styled.input<ContainerProps>`
+export const InputContainer = styled.input<InputContainerProps>`
   height: 3.125rem;
   width: 22.5rem;
 
@@ -19,4 +19,11 @@ export const Container = styled.input<ContainerProps>`
 
   color: var(--blue-200);
   background: ${({ color }) => `var(--${color});`};
+`
+
+export const Error = styled.div`
+  margin-top: 0.4rem;
+  margin-bottom: 0.2rem;
+
+  font-weight: 200;
 `

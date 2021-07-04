@@ -40,7 +40,7 @@ class UserController {
         name: user.name,
         email: user.email
       }, secretKey!, {
-        expiresIn: 86400 // 24 hours
+        expiresIn: 60 * 60 * 1 // 1 hour
       })
 
       res.status(200).json({ user, token })
@@ -70,6 +70,23 @@ class UserController {
       })
 
       res.status(201).json({ user: response })
+    } catch (err) {
+      res.status(500).send({ message: err.message })
+    }
+  }
+
+  async recoverInformation (req: Request, res: Response) : Promise<void> {
+    try {
+      const { userDecoded } = req.body
+
+      const user = await this.repository.getOne(userDecoded.email)
+
+      if (user == null) {
+        res.status(404).send({ message: 'User not found' })
+        return
+      }
+
+      res.status(200).json({ user })
     } catch (err) {
       res.status(500).send({ message: err.message })
     }
