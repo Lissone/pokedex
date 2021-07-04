@@ -1,18 +1,27 @@
+import { LikeButton } from '../LikeButton'
 import { Container, PokemonAvatar, Fields, Field, Divider } from './styles'
 
+export interface Pokemon {
+  id: string
+  name: string
+  photo: string
+  height: string
+  weight: string
+  isLiked: boolean
+  types: string[]
+  abilities: string[]
+  evolutions?: Pokemon[] | null
+}
+
 interface PokemonCardProps {
-  pokemon: {
-    id: string
-    name: string
-    photo: string
-    isLiked: boolean
-    types: string[]
-  }
-  handleLike: (pokemonId: string) => void
+  pokemon: Pokemon
+  handleLike: (pokemon: Pokemon) => void
 }
 
 export function PokemonCard({ pokemon, handleLike }: PokemonCardProps) {
-  const formattedTypes = pokemon.types.join(', ')
+  const formattedTypes = pokemon.types
+    .join(', ')
+    .replace(/\b\w/g, l => l.toUpperCase())
 
   return (
     <Container>
@@ -24,7 +33,7 @@ export function PokemonCard({ pokemon, handleLike }: PokemonCardProps) {
         <Fields>
           <Field>
             <span>Nome</span>
-            <p>{pokemon.name}</p>
+            <p>{pokemon.name.replace(/\b\w/g, l => l.toUpperCase())}</p>
           </Field>
 
           <Field>
@@ -40,13 +49,10 @@ export function PokemonCard({ pokemon, handleLike }: PokemonCardProps) {
         </Divider>
 
         <div>
-          <button type="button" onClick={() => handleLike(pokemon.id)}>
-            {pokemon.isLiked ? (
-              <img src="/images/like.svg" alt="Gostei" />
-            ) : (
-              <img src="/images/unlike.svg" alt="Gostei" />
-            )}
-          </button>
+          <LikeButton
+            pokemon={pokemon}
+            handleLike={() => handleLike(pokemon)}
+          />
         </div>
       </aside>
     </Container>

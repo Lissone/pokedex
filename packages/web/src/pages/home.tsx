@@ -3,7 +3,7 @@ import Head from 'next/head'
 
 import { Header } from '../components/Header'
 import { FavoritePokemon } from '../components/FavoritePokemon'
-import { PokemonCard } from '../components/PokemonCard'
+import { Pokemon, PokemonCard } from '../components/PokemonCard'
 import { Load } from '../components/Load'
 
 import {
@@ -17,36 +17,45 @@ export default function Home() {
   const pokemonsList = [
     {
       id: '1',
-      name: 'Bulbasaur',
+      name: 'bulbasaur',
       photo:
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg',
-      types: ['Poison', 'Grass'],
-      isLiked: true
+      height: '7',
+      weight: '69',
+      isLiked: true,
+      abilities: ['overgrow', 'chlorophyll'],
+      types: ['poison', 'grass']
     },
     {
       id: '2',
-      name: 'Ivysaur',
+      name: 'ivysaur',
       photo:
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/2.svg',
-      types: ['Poison', 'Grass'],
-      isLiked: true
+      height: '7',
+      weight: '69',
+      isLiked: true,
+      abilities: ['overgrow', 'chlorophyll'],
+      types: ['poison', 'grass']
     },
     {
       id: '3',
-      name: 'Venusaur',
+      name: 'venusaur',
       photo:
         'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/3.svg',
-      types: ['Poison', 'Grass'],
-      isLiked: false
+      height: '7',
+      weight: '69',
+      isLiked: true,
+      abilities: ['overgrow', 'chlorophyll'],
+      types: ['poison', 'grass']
     }
   ]
 
   const [loading, setLoading] = useState(true)
   const [pokemons, setPokemons] = useState(pokemonsList)
 
-  function handleLike(pokemonId: string) {
+  function handleLike(pokemon: Pokemon) {
     const pokemosUpdated = pokemons.map(item =>
-      item.id === pokemonId
+      item.id === pokemon.id
         ? {
             ...item,
             isLiked: !item.isLiked

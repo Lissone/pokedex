@@ -24,16 +24,6 @@ export const Container = styled.a`
 
     div + div {
       padding: 1rem;
-
-      button,
-      img {
-        width: 2rem;
-        height: 2rem;
-      }
-
-      button {
-        background: var(--gray-700);
-      }
     }
   }
 
@@ -70,8 +60,6 @@ export const PokemonAvatar = styled.div`
   img {
     width: 4.5rem;
     height: 4.5rem;
-
-    transition: opacity 0.4s;
   }
 `
 
