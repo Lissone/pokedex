@@ -11,22 +11,25 @@ import Router from 'next/router'
 
 import { api } from '../services/api'
 
+import { Pokemon } from '../components/PokemonCard'
+
 interface SignInData {
   email: string
   password: string
 }
 
-interface User {
+export interface User {
   uid: string
   name: string
   email: string
   password: string
   createdAt: string
-  pokemonsLiked?: [] | null
+  pokemonsLiked?: Pokemon[] | null
 }
 
 interface AuthContextType {
   user: User | null
+  setUser: (user: User | null) => void
   isAuthenticated: boolean
   signInWithEmailPassword: (data: SignInData) => Promise<void>
   signOut: () => Promise<void>
@@ -69,7 +72,7 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
         expires: tokeExpire
       })
 
-      setUser(data)
+      setUser(data.user)
 
       Router.push('home')
     } catch (err) {
@@ -85,6 +88,7 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
     <AuthContext.Provider
       value={{
         user,
+        setUser,
         isAuthenticated,
         signInWithEmailPassword,
         signOut
