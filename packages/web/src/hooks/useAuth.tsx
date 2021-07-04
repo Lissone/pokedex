@@ -5,7 +5,7 @@ import React, {
   useState,
   useEffect
 } from 'react'
-import { setCookie, parseCookies } from 'nookies'
+import { setCookie, parseCookies, destroyCookie } from 'nookies'
 import jwt from 'jsonwebtoken'
 import Router from 'next/router'
 
@@ -14,6 +14,12 @@ import { api } from '../services/api'
 import { Pokemon } from '../components/PokemonCard'
 
 interface SignInData {
+  email: string
+  password: string
+}
+
+interface SignUpData {
+  name: string
   email: string
   password: string
 }
@@ -32,6 +38,7 @@ interface AuthContextType {
   setUser: (user: User | null) => void
   isAuthenticated: boolean
   signInWithEmailPassword: (data: SignInData) => Promise<void>
+  signUp: (data: SignUpData) => Promise<void>
   signOut: () => Promise<void>
 }
 
@@ -74,14 +81,40 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
       setUser(data.user)
 
-      Router.push('home')
+      Router.push('/home')
+    } catch (err) {
+      throw new Error(err)
+    }
+  }
+
+  async function signUp(userSignUp: SignUpData) {
+    try {
+      const { data } = await api.post('/user/register', userSignUp)
+
+      api.defaults.headers.authorization = `Bearer ${data.token}`
+
+      const { exp } = await jwt.verify(data.token, secretKey)
+
+      const tokenExpire = new Date(exp * 1000)
+
+      await setCookie(undefined, '@Pokedex/token', data.token, {
+        expires: tokenExpire
+      })
+
+      setUser(data.user)
+
+      Router.push('/home')
     } catch (err) {
       throw new Error(err)
     }
   }
 
   async function signOut() {
-    // limpar cookie e limpar user
+    await destroyCookie(undefined, '@Pokedex/token')
+
+    setUser(null)
+
+    Router.push('/')
   }
 
   return (
@@ -91,6 +124,7 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
         setUser,
         isAuthenticated,
         signInWithEmailPassword,
+        signUp,
         signOut
       }}
     >

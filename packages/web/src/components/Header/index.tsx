@@ -1,9 +1,13 @@
 import { FaUserAlt } from 'react-icons/fa'
 import { BiExit } from 'react-icons/bi'
 
+import { useAuth } from '../../hooks/useAuth'
+
 import { Container, Content } from './styles'
 
 export function Header() {
+  const { signOut } = useAuth()
+
   return (
     <Container>
       <Content>
@@ -12,7 +16,7 @@ export function Header() {
         <div>
           <FaUserAlt size={30} />
 
-          <button type="button">
+          <button type="button" onClick={signOut}>
             <span>SAIR</span>
 
             <BiExit size={10} />

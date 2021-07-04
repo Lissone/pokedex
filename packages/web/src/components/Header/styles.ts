@@ -22,8 +22,6 @@ export const Content = styled.main`
 
   img {
     width: 12.5rem;
-
-    cursor: pointer;
   }
 
   div {
@@ -36,10 +34,10 @@ export const Content = styled.main`
     svg {
       cursor: pointer;
 
-      transition: filter 0.6s;
+      transition: filter 0.4s;
 
       &:hover {
-        filter: brightness(0.8);
+        filter: brightness(0.5);
       }
     }
 

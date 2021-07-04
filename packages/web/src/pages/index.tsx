@@ -1,15 +1,22 @@
-import { useRef } from 'react'
 import Head from 'next/head'
+import { GetServerSideProps } from 'next'
+import { useRef, useState } from 'react'
 import * as Yup from 'yup'
+import { parseCookies } from 'nookies'
 import { AiFillGithub } from 'react-icons/ai'
 
 import { useAuth } from '../hooks/useAuth'
-
 import { Button } from '../components/Button'
 import { Input } from '../components/Input'
 import { Developer } from '../components/Developer'
 
-import { Container, Content, Form, Divider } from '../styles/loginRegister'
+import {
+  Container,
+  Content,
+  Form,
+  Divider,
+  TextLink
+} from '../styles/loginRegister'
 
 interface SignInData {
   email: string
@@ -18,10 +25,14 @@ interface SignInData {
 
 export default function Login() {
   const { signInWithEmailPassword } = useAuth()
+
   const formRef = useRef(null)
+  const [loading, setLoading] = useState(false)
 
   async function handleSubmit(data: SignInData) {
     try {
+      setLoading(true)
+
       const schema = Yup.object().shape({
         email: Yup.string()
           .email('Digite um e-mail válido')
@@ -37,8 +48,12 @@ export default function Login() {
 
       await signInWithEmailPassword(data)
 
+      setLoading(false)
+
       formRef.current.setErrors({})
     } catch (err) {
+      setLoading(false)
+
       if (err instanceof Yup.ValidationError) {
         const errorMessages = {}
 
@@ -79,12 +94,12 @@ export default function Login() {
             <Input name="email" placeholder="E-mail" />
             <Input name="password" placeholder="Senha" type="password" />
 
-            <Button type="submit" title="Entrar">
+            <Button type="submit" title="Entrar" disabled={loading}>
               <img src="/images/log-in.svg" alt="Login" />
             </Button>
 
             <span>
-              Não tem uma conta? <a href="#">Cadastrar</a>
+              Não tem uma conta? <TextLink href="/register">Cadastrar</TextLink>
             </span>
           </Form>
 
@@ -95,4 +110,21 @@ export default function Login() {
       </Container>
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const { '@Pokedex/token': token } = parseCookies(ctx)
+
+  if (token) {
+    return {
+      redirect: {
+        destination: '/home',
+        permanent: false
+      }
+    }
+  }
+
+  return {
+    props: {}
+  }
 }

@@ -51,6 +51,7 @@ class UserController {
 
   async register (req: Request, res: Response) : Promise<void> {
     try {
+      const secretKey = process.env.SECRET_KEY
       const { email, password } = req.body
 
       const user = await this.repository.getOne(email)
@@ -69,7 +70,15 @@ class UserController {
         createdAt: new Date()
       })
 
-      res.status(201).json({ user: response })
+      const token = jwt.sign({
+        uid: response.uid,
+        name: response.name,
+        email: response.email
+      }, secretKey!, {
+        expiresIn: 60 * 60 * 1 // 1 hour
+      })
+
+      res.status(201).json({ user: response, token })
     } catch (err) {
       res.status(500).send({ message: err.message })
     }

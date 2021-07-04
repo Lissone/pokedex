@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-
+import Link from 'next/link'
 import { Form as Unform } from '@unform/web'
 
 export const Container = styled.main`
@@ -71,16 +71,6 @@ export const Form = styled(Unform)`
 
   > span {
     margin-top: 1rem;
-
-    a {
-      color: var(--primary);
-
-      transition: filter 0.4s;
-
-      &:hover {
-        filter: brightness(0.9);
-      }
-    }
   }
 `
 
@@ -103,5 +93,16 @@ export const Divider = styled.div`
     background: var(--blue-200);
     width: 100%;
     height: 1px;
+  }
+`
+
+export const TextLink = styled(Link)`
+  color: var(--primary);
+  background: transparent;
+
+  transition: filter 0.4s;
+
+  &:hover {
+    filter: brightness(0.9);
   }
 `
