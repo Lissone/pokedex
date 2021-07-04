@@ -30,8 +30,8 @@ export function PokemonCard({
     .replace(/\b\w/g, l => l.toUpperCase())
 
   return (
-    <Container onClick={() => onClick(pokemon.id)}>
-      <div>
+    <Container>
+      <div onClick={() => onClick(pokemon.id)}>
         <PokemonAvatar className="avatar">
           <img src={pokemon.photo} alt={pokemon.name} />
         </PokemonAvatar>

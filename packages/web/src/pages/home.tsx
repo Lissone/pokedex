@@ -68,7 +68,7 @@ export default function Home() {
     )
 
     const pokemonUpdated = pokemonsUpdated.filter(
-      item => item.id === pokemon.id && { ...item, isLiked: !pokemon.isLiked }
+      item => item.id === pokemon.id
     )
 
     const newUser: User = {
@@ -77,7 +77,11 @@ export default function Home() {
       email: user.email,
       password: user.password,
       createdAt: user.createdAt,
-      pokemonsLiked: [...user.pokemonsLiked, pokemonUpdated[0]]
+      pokemonsLiked: pokemonUpdated[0].isLiked
+        ? [...user.pokemonsLiked, pokemonUpdated[0]]
+        : user.pokemonsLiked.filter(
+            pokemonLiked => pokemonLiked.id !== pokemonUpdated[0].id
+          )
     }
 
     setPokemons(pokemonsUpdated)

@@ -39,7 +39,15 @@ class PokemonController {
       const { id } = req.params
       const { userDecoded } = req.body
 
-      const pokemon = await this.repository.getOne(id, userDecoded, true)
+      const userRepository = new UserRepository()
+      const user = await userRepository.getOne(userDecoded.email)
+
+      if (user == null) {
+        res.status(401).json({ error: 'Token invalid' })
+        return
+      }
+
+      const pokemon = await this.repository.getOne(id, user, true)
 
       if (pokemon === undefined) {
         res.status(500).send({ message: 'Pokemon not found' })
