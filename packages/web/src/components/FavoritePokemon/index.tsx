@@ -1,15 +1,20 @@
+import { ButtonHTMLAttributes } from 'react'
 import { AiOutlineQuestion } from 'react-icons/ai'
 
 import { Container } from './styles'
 
-interface FavoritePokemonProps {
+interface FavoritePokemonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   name?: string
   photo?: string
 }
 
-export function FavoritePokemon({ name, photo }: FavoritePokemonProps) {
+export function FavoritePokemon({
+  name,
+  photo,
+  ...rest
+}: FavoritePokemonProps) {
   return (
-    <Container>
+    <Container {...rest}>
       {photo ? <img src={photo} alt={name} /> : <AiOutlineQuestion />}
 
       <span>Qual seu pokémon favorito?</span>

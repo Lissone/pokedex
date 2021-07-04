@@ -1,7 +1,8 @@
 import Head from 'next/head'
-import { useCallback, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { parseCookies } from 'nookies'
+import { useRouter } from 'next/router'
 
 import { api } from '../services/api'
 import { useAuth, User } from '../hooks/useAuth'
@@ -15,22 +16,24 @@ import {
   Container,
   Content,
   HeaderContent,
-  ListPokemonCards
+  ListPokemonCards,
+  FooterContent,
+  MorePokemons
 } from '../styles/home'
 
 export default function Home() {
+  const router = useRouter()
   const { user, setUser } = useAuth()
 
-  let pokemonNotFound = false
   const [loading, setLoading] = useState(true)
-  const [page, setPage] = useState('')
+  const [page, setPage] = useState<string | null>('?offset=0&limit=20')
   const [search, setSearch] = useState('')
   const [pokemons, setPokemons] = useState<Pokemon[]>([])
 
   async function loadPokemons() {
     setLoading(true)
 
-    const url = `/pokemon/${!page ? '?offset=0&limit=20' : page}`
+    const url = `/pokemon/${page}`
     const { data } = await api.get(url)
 
     setLoading(false)
@@ -39,14 +42,12 @@ export default function Home() {
     setPokemons(data.pokemons)
   }
 
-  useState(
-    useCallback(() => {
-      loadPokemons()
-    }, [search])
-  )
+  useEffect(() => {
+    loadPokemons()
+  }, [])
 
   function morePokemons() {
-    if (!page) {
+    if (page === null) {
       return
     }
 
@@ -82,8 +83,14 @@ export default function Home() {
     setPokemons(pokemonsUpdated)
 
     api.put('/user/', { user: newUser }).then(({ data }) => setUser(data.user))
+  }
 
-    // morePokemons()
+  function handleClickPokemonAvatar() {
+    router.push('/account')
+  }
+
+  function handleClickPokemonCard(pokemonId: string) {
+    router.push(`/pokemon/${pokemonId}`)
   }
 
   return (
@@ -97,7 +104,7 @@ export default function Home() {
       <Container>
         <Content>
           <header>
-            <FavoritePokemon />
+            <FavoritePokemon onClick={handleClickPokemonAvatar} />
 
             <HeaderContent>
               <h1>Bem-vindo</h1>
@@ -105,6 +112,7 @@ export default function Home() {
 
               <span>Chegou a hora de entrar no mundo pokémon</span>
             </HeaderContent>
+
             <div />
           </header>
 
@@ -115,34 +123,40 @@ export default function Home() {
           />
 
           {pokemons.length > 0 && (
-            <ListPokemonCards>
-              {pokemons
-                .filter(pokemon => {
-                  if (search === '') {
-                    return pokemon
-                  }
+            <>
+              <ListPokemonCards>
+                {pokemons
+                  .filter(pokemon => {
+                    if (search === '') {
+                      return pokemon
+                    }
 
-                  if (
-                    pokemon.name.toLowerCase().includes(search.toLowerCase())
-                  ) {
-                    return pokemon
-                  }
+                    if (
+                      pokemon.name.toLowerCase().includes(search.toLowerCase())
+                    ) {
+                      return pokemon
+                    }
 
-                  pokemonNotFound = true
-                  return null
-                })
-                .map(pokemon => (
-                  <PokemonCard
-                    key={pokemon.id}
-                    pokemon={pokemon}
-                    handleLike={handleLike}
-                  />
-                ))}
+                    return null
+                  })
+                  .map(pokemon => (
+                    <PokemonCard
+                      key={pokemon.id}
+                      pokemon={pokemon}
+                      handleLike={handleLike}
+                      onClick={() => handleClickPokemonCard(pokemon.id)}
+                    />
+                  ))}
+              </ListPokemonCards>
 
-              {pokemonNotFound && (
-                <span>Este pokémon ainda não foi carregado</span>
+              {!loading && (
+                <FooterContent>
+                  <MorePokemons onClick={morePokemons}>
+                    <span>Carregar mais pokemons</span>
+                  </MorePokemons>
+                </FooterContent>
               )}
-            </ListPokemonCards>
+            </>
           )}
         </Content>
 
