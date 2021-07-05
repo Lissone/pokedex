@@ -62,7 +62,8 @@ class UserController {
         ...req.body,
         uid: uuidv4(),
         password: hash,
-        createdAt: new Date()
+        createdAt: new Date(),
+        pokemonsLiked: []
       })
 
       const token = jwt.sign({

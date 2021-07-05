@@ -14,7 +14,7 @@ interface IUser {
   email: string
   password: string
   createdAt: Date
-  pokemonsLiked?: IPokemon[] | null
+  pokemonsLiked: IPokemon[]
 }
 
 interface IUserRepository {

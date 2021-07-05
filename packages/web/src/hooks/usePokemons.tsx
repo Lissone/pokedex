@@ -1,10 +1,4 @@
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState
-} from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
 
 import { useAuth, User } from './useAuth'
 import { api } from '../services/api'
@@ -24,8 +18,8 @@ export interface Pokemon {
 interface PokemonContextType {
   pokemons: Pokemon[]
   page: string
-  setPage: (page: string) => void
-  savePokemons: (pokemon: Pokemon[]) => void
+  getPokemons: () => Promise<void>
+  savePokemonsStorage: (page: string, pokemon: Pokemon[]) => Promise<void>
   handleLike: (pokemon: Pokemon) => void
 }
 
@@ -41,23 +35,36 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
   const [pokemons, setPokemons] = useState<Pokemon[]>([])
   const [page, setPage] = useState<string | null>('?offset=0&limit=20')
 
-  useEffect(() => {
-    const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
+  async function getPokemons() {
+    try {
+      if (pokemons.length <= 0) {
+        const url = `/pokemon/${page}`
+        const { data } = await api.get(url)
 
-    if (storagedListPokemons) {
-      const storageParsed = JSON.parse(storagedListPokemons)
+        setPage(data.nextPage)
+        setPokemons(data.pokemons)
+      }
 
-      setPage(storageParsed.nextPage)
-      setPokemons(storageParsed.pokemons)
+      const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
+
+      if (storagedListPokemons) {
+        const storageParsed = JSON.parse(storagedListPokemons)
+
+        setPage(storageParsed.nextPage)
+        setPokemons(storageParsed.pokemons)
+      }
+    } catch (err) {
+      throw new Error(err)
     }
-  }, [])
+  }
 
-  async function savePokemons(data: Pokemon[]) {
+  async function savePokemonsStorage(nextPage: string, data: Pokemon[]) {
+    setPage(nextPage)
     setPokemons(data)
 
     localStorage.setItem(
       '@Pokedex:pokemons',
-      JSON.stringify({ nextPage: page, pokemons: data })
+      JSON.stringify({ nextPage, pokemons: data })
     )
   }
 
@@ -77,13 +84,13 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
       password: user.password,
       createdAt: user.createdAt,
       pokemonsLiked: pokemonUpdated[0].isLiked
-        ? [...user.pokemonsLiked, pokemonUpdated[0]]
+        ? [...user?.pokemonsLiked, pokemonUpdated[0]]
         : user.pokemonsLiked.filter(
             pokemonLiked => pokemonLiked.id !== pokemonUpdated[0].id
           )
     }
 
-    savePokemons(pokemonsUpdated)
+    savePokemonsStorage(page, pokemonsUpdated)
 
     api.put('/user/', { user: newUser }).then(({ data }) => setUser(data.user))
   }
@@ -92,9 +99,9 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
     <PokemonsContext.Provider
       value={{
         pokemons,
-        savePokemons,
+        getPokemons,
+        savePokemonsStorage,
         page,
-        setPage,
         handleLike
       }}
     >

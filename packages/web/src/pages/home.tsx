@@ -26,30 +26,18 @@ import {
 export default function Home() {
   const router = useRouter()
   const { user } = useAuth()
-  const { pokemons, savePokemons, page, setPage, handleLike } = usePokemons()
+  const { pokemons, savePokemonsStorage, getPokemons, page, handleLike } =
+    usePokemons()
 
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
 
-  async function loadPokemons() {
+  useEffect(() => {
     setLoading(true)
 
-    if (pokemons) {
+    getPokemons().then(() => {
       setLoading(false)
-      return
-    }
-
-    const url = `/pokemon/${page}`
-    const { data } = await api.get(url)
-
-    setLoading(false)
-
-    setPage(data.nextPage)
-    savePokemons(data.pokemons)
-  }
-
-  useEffect(() => {
-    loadPokemons()
+    })
   }, [])
 
   function handleMorePokemons() {
@@ -58,14 +46,12 @@ export default function Home() {
     }
 
     setLoading(true)
-
     api
       .get(`/pokemon/${page}`)
-      .then(({ data }) => {
+      .then(async ({ data }) => {
         setLoading(false)
 
-        setPage(data.nextPage)
-        savePokemons([...pokemons, ...data.pokemons])
+        savePokemonsStorage(data.nextPage, [...pokemons, ...data.pokemons])
       })
       .catch(() => {
         toast.error('Ocorreu um erro inesperado', {

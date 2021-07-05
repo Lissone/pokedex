@@ -160,6 +160,7 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
   async function signOut() {
     await destroyCookie(undefined, '@Pokedex/token')
+    localStorage.removeItem('@Pokedex:pokemons')
 
     setUser(null)
 
