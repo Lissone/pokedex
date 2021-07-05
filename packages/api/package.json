@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "node .",
+    "start": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules -r tsconfig-paths/register .",
     "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules -r tsconfig-paths/register ."
   },
   "dependencies": {
