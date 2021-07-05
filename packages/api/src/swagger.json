@@ -1,0 +1,466 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": " 1.0.0 ",
+		"title": "Pokedex-Api",
+		"description": "This is an API to serve as user authentication backend, and bridge to another api.",
+		"author": "Leonardo Dias Lissone",
+		"Serget - Website": "http://pokedex-lissone.com.br/",
+		"termsOfService": "http://swagger.io/terms/",
+		"contact": {
+			"email": "leonardo.lissonez@gmail.com"
+		}
+	},
+	"host": "localhost:5000/api/",
+	"basePath": "v1",
+	"tags": [
+    {
+			"name": "User",
+			"description": "Main key to a user authentication system"
+		},
+    {
+			"name": "Pokemon",
+			"description": "API product being consumed"
+		}
+	],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+	"paths": {
+    "/user/authenticate": {
+      "post": {
+				"tags": [
+					"User"
+				],
+				"summary": "User log in and verify exists",
+				"produces": [
+					"application/json"
+				],
+        "parameters": [
+          {
+						"name": "user",
+						"in": "body",
+						"required": true,
+						"description": "User sign in data",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"email": {
+									"type": "string"
+								},
+								"password": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+            "schema": {
+							"type": "object",
+              "properties": {
+                "user": {
+                  "$ref": "#/definitions/User"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+						}
+					},
+          "401": {
+						"description": "Unauthorized"
+					},
+          "400": {
+						"description": "Bad request"
+					},
+          "404": {
+						"description": "Not found"
+					},
+          "500": {
+            "description": "Internal Server Error"
+          }
+				}
+			}
+    },
+    "/user/register": {
+      "post": {
+				"tags": [
+					"User"
+				],
+				"summary": "Register user in database",
+				"produces": [
+					"application/json"
+				],
+				"parameters": [
+          {
+						"name": "user",
+						"in": "body",
+						"required": true,
+						"description": "User sign up data",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string"
+								},
+								"email": {
+									"type": "string"
+								},
+								"password": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+            "schema": {
+							"type": "object",
+              "properties": {
+                "user": {
+                  "$ref": "#/definitions/User"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+						}
+					},
+          "401": {
+						"description": "Unauthorized"
+					},
+          "400": {
+						"description": "Bad request"
+					},
+          "404": {
+						"description": "Not found"
+					},
+          "500": {
+            "description": "Internal Server Error"
+          }
+				}
+			}
+    },
+    "/user/recover": {
+			"get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+				"tags": [
+					"User"
+				],
+				"summary": "Recover user with token",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+            "schema": {
+							"$ref": "#/definitions/User"
+						}
+					},
+          "401": {
+						"description": "Unauthorized"
+					},
+          "404": {
+						"description": "Not found"
+					},
+          "500": {
+            "description": "Internal Server Error"
+          }
+				}
+			}
+		},
+    "/user": {
+      "put": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+				"tags": [
+					"User"
+				],
+				"summary": "Update one user in database",
+        "consumes": [
+					"application/json"
+				],
+				"produces": [
+					"application/json"
+				],
+        "parameters": [
+          {
+						"name": "user",
+						"in": "body",
+						"required": true,
+						"description": "User entity in the db",
+						"schema": {
+							"type": "object",
+							"properties": {
+								"uid": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"email": {
+									"type": "string"
+								},
+								"password": {
+									"type": "string"
+								},
+                "createdAt": {
+									"type": "date-time",
+									"example": "2021-01-30T08:30:00Z"
+								},
+								"pokemonStarred": {
+                  "type": "object",
+                  "$ref": "#/definitions/Pokemon"
+                },
+                "pokemonsLiked": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Pokemon"
+                  }
+                }
+							}
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+            "schema": {
+							"$ref": "#/definitions/User"
+						}
+					},
+          "401": {
+						"description": "Unauthorized"
+					},
+          "400": {
+						"description": "Bad request"
+					},
+          "404": {
+						"description": "Not found"
+					},
+          "500": {
+            "description": "Internal Server Error"
+          }
+				}
+			}
+    },
+    "/pokemon": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+				"tags": [
+					"Pokemon"
+				],
+				"summary": "Return pokemons list with pages",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/Pokemon"
+              }
+						}
+					},
+          "401": {
+						"description": "Unauthorized"
+					},
+          "500": {
+            "description": "Internal Server Error"
+          }
+				}
+			}
+    },
+    "/pokemon/:id": {
+      "parameters": [
+				{
+					"name": "id",
+					"in": "path",
+					"required": true,
+					"description": "Pokemon's identify key",
+					"type": "string"
+				}
+			],
+			"get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+				"tags": [
+					"Pokemon"
+				],
+				"summary": "Return one pokemon with all details",
+				"produces": [
+					"application/json"
+				],
+				"responses": {
+					"200": {
+						"description": "Ok",
+            "schema": {
+							"$ref": "#/definitions/Pokemon"
+						}
+					},
+          "401": {
+						"description": "Unauthorized"
+					},
+          "404": {
+						"description": "Not found"
+					},
+          "500": {
+            "description": "Internal Server Error"
+          }
+				}
+			}
+		}
+	},
+	"definitions": {
+    "User": {
+			"type": "object",
+			"properties": {
+				"uid": {
+					"type": "string"
+				},
+        "name": {
+					"type": "string"
+				},
+				"email": {
+					"type": "string"
+				},
+				"password": {
+					"type": "string"
+				},
+        "createdAt": {
+          "type": "date-time",
+          "example": "2021-01-30T08:30:00Z"
+        },
+        "pokemonStarred": {
+          "type": "object",
+					"$ref": "#/definitions/Pokemon"
+        },
+        "pokemonsLiked": {
+          "type": "array",
+          "items": {
+						"$ref": "#/definitions/Pokemon"
+          }
+        }
+			}
+		},
+    "Pokemon": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "integer"
+				},
+        "name": {
+					"type": "string"
+				},
+				"photo": {
+					"type": "string"
+				},
+				"height": {
+					"type": "string"
+				},
+        "weight": {
+					"type": "string"
+				},
+        "isLiked": {
+					"type": "boolean"
+				},
+        "isStarred": {
+					"type": "boolean"
+				},
+        "types": {
+          "type": "array",
+          "items": {
+						"$ref": "#/definitions/Type"
+          }
+        },
+        "abilities": {
+          "type": "array",
+          "items": {
+						"$ref": "#/definitions/Ability"
+          }
+        },
+        "evolutions": {
+          "type": "array",
+          "items": {
+						"$ref": "#/definitions/Pokemon"
+          }
+        }
+			}
+		},
+    "PokemonList": {
+			"type": "object",
+			"properties": {
+				"nextPage": {
+					"type": "string"
+				},
+				"previousPage": {
+					"type": "string"
+				},
+        "pokemons": {
+          "type": "array",
+          "items": {
+						"$ref": "#/definitions/Pokemon"
+          }
+        }
+			}
+		},
+    "Type": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				}
+			}
+		},
+    "Ability": {
+			"type": "object",
+			"properties": {
+				"name": {
+					"type": "string"
+				},
+				"url": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}

@@ -1,7 +1,9 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
+import swaggerUi from 'swagger-ui-express'
 
+import * as swaggerDocument from '../swagger.json'
 import { apiRoutes } from './routes'
 
 const app = express()
@@ -30,8 +32,6 @@ app.use(cors(options))
 
 app.use(apiRoutes)
 
-app.get('/', (req, res) => {
-  res.send({ message: 'API' })
-})
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 export { app }

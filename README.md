@@ -45,10 +45,12 @@ For the development of this project, a flowchart was created as application docu
 ## Technologies
 
 ### Backend (Api)
-* Express
+* Nodejs
 * Typescript
-* Firebase (database)
+* Express
+* Firestore
 * Jwt authentication
+* Swagger
 
 ### Front End
 * NextJs

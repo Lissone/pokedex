@@ -50,7 +50,7 @@ class PokemonController {
       const pokemon = await this.repository.getOne(id, user, true)
 
       if (pokemon === undefined) {
-        res.status(500).send({ message: 'Pokemon not found' })
+        res.status(404).send({ message: 'Pokemon not found' })
         return
       }
 
