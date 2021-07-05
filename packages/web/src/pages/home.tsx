@@ -5,8 +5,9 @@ import { parseCookies } from 'nookies'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 
+import { getApiClient } from '../services/axios'
 import { api } from '../services/api'
-import { useAuth } from '../hooks/useAuth'
+import { User } from '../hooks/useAuth'
 import { usePokemons } from '../hooks/usePokemons'
 
 import { Header } from '../components/Header'
@@ -23,9 +24,13 @@ import {
   MorePokemons
 } from '../styles/home'
 
-export default function Home() {
+interface HomeProps {
+  user: User
+}
+
+export default function Home({ user }: HomeProps) {
   const router = useRouter()
-  const { user } = useAuth()
+
   const { pokemons, savePokemonsStorage, getPokemons, page, handleLike } =
     usePokemons()
 
@@ -79,7 +84,12 @@ export default function Home() {
       <Container>
         <Content>
           <header>
-            <FavoritePokemon onClick={handleClickPokemonAvatar} />
+            <FavoritePokemon
+              onClick={handleClickPokemonAvatar}
+              photo={
+                user.pokemonStarred ? user.pokemonStarred.photo : undefined
+              }
+            />
 
             <HeaderContent>
               <h1>Bem-vindo</h1>
@@ -142,6 +152,7 @@ export default function Home() {
 }
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
+  const apiClient = getApiClient(ctx)
   const { '@Pokedex/token': token } = parseCookies(ctx)
 
   if (!token) {
@@ -153,7 +164,11 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     }
   }
 
+  const { data } = await apiClient.get('/user/recover')
+
   return {
-    props: {}
+    props: {
+      user: data.user
+    }
   }
 }

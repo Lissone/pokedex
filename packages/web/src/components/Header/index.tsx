@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { FaUserAlt } from 'react-icons/fa'
 import { BiExit } from 'react-icons/bi'
 
@@ -11,10 +12,14 @@ export function Header() {
   return (
     <Container>
       <Content>
-        <img src="/images/logo.png" alt="Pokedex" />
+        <Link href="/">
+          <img src="/images/logo.png" alt="Pokedex" />
+        </Link>
 
         <div>
-          <FaUserAlt size={30} />
+          <Link href="/account">
+            <FaUserAlt size={30} />
+          </Link>
 
           <button type="button" onClick={signOut}>
             <span>SAIR</span>

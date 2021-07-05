@@ -17,6 +17,7 @@ interface IPokemon {
   height: string
   weight: string
   isLiked?: boolean
+  isStarred?: boolean
   types: IType[]
   abilities: IAbility[]
   evolutions?: IPokemon[] | null

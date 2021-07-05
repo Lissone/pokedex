@@ -13,6 +13,7 @@ export const Content = styled.div`
 
   margin-top: 4rem;
 
+  border-radius: 1rem;
   -webkit-box-shadow: 0px 0px 40px 5px rgba(0, 0, 0, 0.25);
   box-shadow: 0px 0px 40px 5px rgba(0, 0, 0, 0.25);
 

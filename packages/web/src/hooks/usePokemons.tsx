@@ -9,6 +9,7 @@ export interface Pokemon {
   photo: string
   height: string
   weight: string
+  isStarred: boolean
   isLiked: boolean
   types: string[]
   abilities: string[]
@@ -21,6 +22,7 @@ interface PokemonContextType {
   getPokemons: () => Promise<void>
   savePokemonsStorage: (page: string, pokemon: Pokemon[]) => Promise<void>
   handleLike: (pokemon: Pokemon) => void
+  handleStar: (pokemon: Pokemon) => void
 }
 
 interface PokemonContextProviderProps {
@@ -83,6 +85,7 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
       email: user.email,
       password: user.password,
       createdAt: user.createdAt,
+      pokemonStarred: user.pokemonStarred,
       pokemonsLiked: pokemonUpdated[0].isLiked
         ? [...user?.pokemonsLiked, pokemonUpdated[0]]
         : user.pokemonsLiked.filter(
@@ -95,6 +98,25 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
     api.put('/user/', { user: newUser }).then(({ data }) => setUser(data.user))
   }
 
+  function handleStar(pokemon: Pokemon) {
+    const pokemonUpdated = {
+      ...pokemon,
+      isStarred: !pokemon.isStarred
+    }
+
+    const newUser: User = {
+      uid: user.uid,
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      createdAt: user.createdAt,
+      pokemonStarred: pokemonUpdated,
+      pokemonsLiked: user.pokemonsLiked
+    }
+
+    api.put('/user/', { user: newUser }).then(({ data }) => setUser(data.user))
+  }
+
   return (
     <PokemonsContext.Provider
       value={{
@@ -102,7 +124,8 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
         getPokemons,
         savePokemonsStorage,
         page,
-        handleLike
+        handleLike,
+        handleStar
       }}
     >
       {children}

@@ -63,6 +63,7 @@ class UserController {
         uid: uuidv4(),
         password: hash,
         createdAt: new Date(),
+        pokemonStarred: {},
         pokemonsLiked: []
       })
 

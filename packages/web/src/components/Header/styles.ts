@@ -22,6 +22,8 @@ export const Content = styled.main`
 
   img {
     width: 12.5rem;
+
+    cursor: pointer;
   }
 
   div {

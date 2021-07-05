@@ -26,6 +26,10 @@ export const Container = styled.div`
 
     div + div {
       padding: 1rem;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
   }
 

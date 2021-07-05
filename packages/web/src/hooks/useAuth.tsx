@@ -31,13 +31,13 @@ export interface User {
   email: string
   password: string
   createdAt: string
-  pokemonsLiked?: Pokemon[] | null
+  pokemonStarred?: Pokemon
+  pokemonsLiked?: Pokemon[]
 }
 
 interface AuthContextType {
   user: User | null
   setUser: (user: User | null) => void
-  isAuthenticated: boolean
   signInWithEmailPassword: (data: SignInData) => Promise<void>
   signInWithGoogle: () => Promise<void>
   signUp: (data: SignUpData) => Promise<void>
@@ -55,14 +55,21 @@ export const AuthContext = createContext({} as AuthContextType)
 export function AuthProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [googleUser, setGoogleUser] = useState<SignUpData>(null)
-  const isAuthenticated = !!user
 
-  useEffect(() => {
+  async function parseUserCookie() {
     const { '@Pokedex/token': token } = parseCookies()
 
     if (token) {
-      api.get('/user/recover').then(({ data }) => setUser(data.user))
+      api.defaults.headers.authorization = `Bearer ${token}`
+
+      const { data } = await api.get('/user/recover')
+
+      setUser(data.user)
     }
+  }
+
+  useEffect(() => {
+    parseUserCookie()
   }, [])
 
   async function signInWithEmailPassword({ email, password }: SignInData) {
@@ -172,7 +179,6 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
       value={{
         user,
         setUser,
-        isAuthenticated,
         signInWithEmailPassword,
         signInWithGoogle,
         signUp,

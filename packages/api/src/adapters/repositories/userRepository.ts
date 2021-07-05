@@ -22,6 +22,7 @@ class UserRepository implements IUserRepository {
       email: user.email,
       password: user.password,
       createdAt: user.createdAt,
+      pokemonStarred: user.pokemonStarred,
       pokemonsLiked: user.pokemonsLiked
     }
   }

@@ -1,5 +1,7 @@
 import { LikeButton } from '../LikeButton'
 
+import { StarButton } from '../StarButton'
+
 import { Container, PokemonAvatar, Fields, Field, Divider } from './styles'
 
 export interface Pokemon {
@@ -8,6 +10,7 @@ export interface Pokemon {
   photo: string
   height: string
   weight: string
+  isStarred: boolean
   isLiked: boolean
   types: string[]
   abilities: string[]
@@ -16,14 +19,18 @@ export interface Pokemon {
 
 interface PokemonCardProps {
   pokemon: Pokemon
-  onClick: (pokemonId: string) => void
+  starIcon?: boolean
+  onClick?: (pokemonId: string) => void
   handleLike: (pokemon: Pokemon) => void
+  handleStar?: (pokemon: Pokemon) => void
 }
 
 export function PokemonCard({
   pokemon,
   onClick,
-  handleLike
+  starIcon = false,
+  handleLike,
+  handleStar
 }: PokemonCardProps) {
   const formattedTypes = pokemon.types
     .join(', ')
@@ -59,6 +66,12 @@ export function PokemonCard({
             pokemon={pokemon}
             handleLike={() => handleLike(pokemon)}
           />
+          {starIcon && (
+            <StarButton
+              pokemon={pokemon}
+              handleStar={() => handleStar(pokemon)}
+            />
+          )}
         </div>
       </aside>
     </Container>

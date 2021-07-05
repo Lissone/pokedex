@@ -21,7 +21,7 @@ export const Content = styled.div`
 
   background: var(--gray-750);
 
-  header {
+  > header {
     height: 11.875rem;
 
     display: flex;
@@ -82,6 +82,23 @@ export const HeaderContent = styled.div`
   }
 `
 
+export const LikedPokemons = styled.section`
+  padding: 2rem 0;
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 400;
+
+      color: var(--blue-200);
+    }
+  }
+`
+
 export const ListPokemonCards = styled.div`
   margin-top: 1.875rem;
 
@@ -89,38 +106,4 @@ export const ListPokemonCards = styled.div`
   grid-template-columns: 1fr 1fr;
 
   gap: 1.25rem;
-`
-
-export const FooterContent = styled.div`
-  margin-top: 2rem;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
-
-export const MorePokemons = styled.button`
-  padding: 1rem 2rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 0.5rem;
-  border: 2px solid var(--blue-200);
-  border-radius: 0.5rem;
-
-  background: var(--blue-900);
-
-  span {
-    font-weight: 500;
-
-    color: var(--blue-200);
-  }
-
-  transition: filter 0.4s ease;
-
-  &:hover {
-    filter: brightness(0.8);
-  }
 `

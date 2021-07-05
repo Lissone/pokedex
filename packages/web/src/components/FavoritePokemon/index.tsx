@@ -5,7 +5,7 @@ import { Container } from './styles'
 
 interface FavoritePokemonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   name?: string
-  photo?: string
+  photo?: string | undefined
 }
 
 export function FavoritePokemon({
