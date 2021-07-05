@@ -36,8 +36,6 @@ export default function Account({ data }: AccountProps) {
     setStarIcon(false)
     setPokemonPhoto(pokemon.photo)
 
-    const pokemonsLikedUpdate = data.pokemonsLiked.map(item => item.id)
-
     handleStar(pokemon)
   }
 
@@ -48,7 +46,7 @@ export default function Account({ data }: AccountProps) {
 
     data.pokemonsLiked = pokemonsUpdated
 
-    handleLike(pokemon)
+    handleLike(pokemon, data)
   }
 
   return (

@@ -21,7 +21,7 @@ interface PokemonContextType {
   page: string
   getPokemons: () => Promise<void>
   savePokemonsStorage: (page: string, pokemon: Pokemon[]) => Promise<void>
-  handleLike: (pokemon: Pokemon) => void
+  handleLike: (pokemon: Pokemon, user?: User) => void
   handleStar: (pokemon: Pokemon) => void
 }
 
@@ -61,6 +61,10 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
   }
 
   async function savePokemonsStorage(nextPage: string, data: Pokemon[]) {
+    if (!data) {
+      return
+    }
+
     setPage(nextPage)
     setPokemons(data)
 
@@ -70,32 +74,44 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
     )
   }
 
-  function handleLike(pokemon: Pokemon) {
-    const pokemonsUpdated = pokemons.map(item =>
-      item.id === pokemon.id ? { ...item, isLiked: !pokemon.isLiked } : item
-    )
+  function handleLike(pokemon: Pokemon, userData?: User) {
+    let userUpdated: User
+    let pokemonsUpdated: Pokemon[]
 
-    const pokemonUpdated = pokemonsUpdated.filter(
-      item => item.id === pokemon.id
-    )
+    if (!userData) {
+      pokemonsUpdated = pokemons.map(item =>
+        item.id === pokemon.id ? { ...item, isLiked: !pokemon.isLiked } : item
+      )
 
-    const newUser: User = {
-      uid: user.uid,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      createdAt: user.createdAt,
-      pokemonStarred: user.pokemonStarred,
-      pokemonsLiked: pokemonUpdated[0].isLiked
-        ? [...user?.pokemonsLiked, pokemonUpdated[0]]
-        : user.pokemonsLiked.filter(
-            pokemonLiked => pokemonLiked.id !== pokemonUpdated[0].id
-          )
+      const pokemonUpdated = pokemonsUpdated.filter(
+        item => item.id === pokemon.id
+      )
+
+      userUpdated = {
+        uid: user.uid,
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        createdAt: user.createdAt,
+        pokemonStarred: user.pokemonStarred,
+        pokemonsLiked: pokemonUpdated[0].isLiked
+          ? [...user?.pokemonsLiked, pokemonUpdated[0]]
+          : user.pokemonsLiked.filter(
+              pokemonLiked => pokemonLiked.id !== pokemonUpdated[0].id
+            )
+      }
+    } else {
+      userUpdated = {
+        ...userData,
+        pokemonsLiked: user.pokemonsLiked.filter(item => item.id !== pokemon.id)
+      }
     }
 
     savePokemonsStorage(page, pokemonsUpdated)
 
-    api.put('/user/', { user: newUser }).then(({ data }) => setUser(data.user))
+    api
+      .put('/user/', { user: userUpdated })
+      .then(({ data }) => setUser(data.user))
   }
 
   function handleStar(pokemon: Pokemon) {
