@@ -5,7 +5,7 @@ import { database } from './services/firebase'
 
 import { app } from './app'
 
-const port = process.env.PORT || 5000
+const port = process.env.APP_URL || 5000
 
 database.collection('Users').get().then(() => {
   console.log('Connected to Firebase')
