@@ -171,7 +171,7 @@ export const EvolutionRow = styled.div`
 
   gap: 2rem;
 
-  img:nth-child(6) {
+  > img:nth-child(1) {
     display: none;
   }
 `

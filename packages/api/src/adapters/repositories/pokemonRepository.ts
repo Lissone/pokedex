@@ -1,23 +1,24 @@
 import { api } from '@external/services/pokeApi'
 
+import { IUser } from '@useCases/IUserRepository'
 import { IPokemonRepository, IPokemonsList, IPokemon } from '@useCases/IPokemonRepository'
 
 class PokemonRepository implements IPokemonRepository {
-  async getAll ({ offset, limit }) : Promise<IPokemonsList> {
+  async getAll (user: IUser, { offset, limit }) : Promise<IPokemonsList> {
     const { data } = await api.get(`/pokemon/?offset=${offset}&limit=${limit}`)
 
     const pokemonsList: IPokemonsList = {
       nextPage: data.next !== null ? `?${data.next.split('?')[1]}` : null,
       previousPage: data.previous !== null ? `?${data.previous.split('?')[1]}` : null,
       pokemons: await Promise.all<IPokemon>(
-        data.results.map(async (pokemon) => await this.getOne(pokemon.name, false))
+        data.results.map(async (pokemon) => await this.getOne(pokemon.name, user, false))
       )
     }
 
     return pokemonsList
   }
 
-  async getOne (name: string, singleConsult: boolean) : Promise<IPokemon | undefined> {
+  async getOne (name: string, user: IUser, singleConsult: boolean) : Promise<IPokemon | undefined> {
     const { data } = await api.get(`/pokemon/${name}`)
 
     const evolutions = singleConsult ? await this.getAllEvolutions(data.id) : null
@@ -28,8 +29,9 @@ class PokemonRepository implements IPokemonRepository {
       photo: data.sprites.other.dream_world.front_default,
       height: data.height,
       weight: data.weight,
-      types: data.types.map(object => object.type),
-      abilities: data.abilities.map(object => object.ability),
+      isLiked: user.pokemonsLiked ? user.pokemonsLiked.some(pokemon => pokemon.id === data.id) : false,
+      types: data.types.map(object => object.type.name),
+      abilities: data.abilities.map(object => object.ability.name),
       evolutions
     }
 

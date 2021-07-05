@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const Container = styled.a`
+export const Container = styled.div`
   width: 30.5rem;
   height: 9.8125rem;
   padding: 1.2rem;
@@ -16,6 +16,8 @@ export const Container = styled.a`
   transition: all 0.6s;
 
   div {
+    cursor: pointer;
+
     display: flex;
   }
 

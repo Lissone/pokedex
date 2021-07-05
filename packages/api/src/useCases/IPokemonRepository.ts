@@ -1,3 +1,5 @@
+import { IUserDecoded } from './IUserRepository'
+
 interface IType {
   name: string
   url: string
@@ -14,6 +16,7 @@ interface IPokemon {
   photo: string
   height: string
   weight: string
+  isLiked?: boolean
   types: IType[]
   abilities: IAbility[]
   evolutions?: IPokemon[] | null
@@ -31,8 +34,8 @@ interface IListingConfig {
 }
 
 interface IPokemonRepository {
-  getAll(config: IListingConfig) : Promise<IPokemonsList>
-  getOne(name: string, singleConsult: boolean) : Promise<IPokemon | undefined>
+  getAll(userDecoded: IUserDecoded, config: IListingConfig) : Promise<IPokemonsList>
+  getOne(name: string, userDecoded: IUserDecoded, singleConsult: boolean) : Promise<IPokemon | undefined>
   getAllEvolutions (id: string) : Promise<IPokemon[] | undefined>
 }
 

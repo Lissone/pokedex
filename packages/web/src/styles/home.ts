@@ -27,6 +27,10 @@ export const Content = styled.div`
     justify-content: space-between;
 
     border-bottom: 1px solid var(--gray-600);
+
+    div + div {
+      width: 8.75rem;
+    }
   }
 
   input {
@@ -84,4 +88,38 @@ export const ListPokemonCards = styled.div`
   grid-template-columns: 1fr 1fr;
 
   gap: 1.25rem;
+`
+
+export const FooterContent = styled.div`
+  margin-top: 2rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
+
+export const MorePokemons = styled.button`
+  padding: 1rem 2rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0.5rem;
+  border: 2px solid var(--blue-200);
+  border-radius: 0.5rem;
+
+  background: var(--blue-900);
+
+  span {
+    font-weight: 500;
+
+    color: var(--blue-200);
+  }
+
+  transition: filter 0.4s ease;
+
+  &:hover {
+    filter: brightness(0.8);
+  }
 `

@@ -1,4 +1,5 @@
 import { LikeButton } from '../LikeButton'
+
 import { Container, PokemonAvatar, Fields, Field, Divider } from './styles'
 
 export interface Pokemon {
@@ -15,17 +16,22 @@ export interface Pokemon {
 
 interface PokemonCardProps {
   pokemon: Pokemon
+  onClick: (pokemonId: string) => void
   handleLike: (pokemon: Pokemon) => void
 }
 
-export function PokemonCard({ pokemon, handleLike }: PokemonCardProps) {
+export function PokemonCard({
+  pokemon,
+  onClick,
+  handleLike
+}: PokemonCardProps) {
   const formattedTypes = pokemon.types
     .join(', ')
     .replace(/\b\w/g, l => l.toUpperCase())
 
   return (
     <Container>
-      <div>
+      <div onClick={() => onClick(pokemon.id)}>
         <PokemonAvatar className="avatar">
           <img src={pokemon.photo} alt={pokemon.name} />
         </PokemonAvatar>

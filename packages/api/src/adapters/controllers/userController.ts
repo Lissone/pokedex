@@ -18,11 +18,6 @@ class UserController {
 
       const { email, password } = req.body
 
-      if (!email || !password) {
-        res.status(400).send({ message: 'Required email and password' })
-        return
-      }
-
       const user = await this.repository.getOne(email)
 
       if (user == null) {
@@ -36,11 +31,11 @@ class UserController {
       }
 
       const token = jwt.sign({
-        id: user.uid,
-        email: user.email,
-        password: user.password
+        uid: user.uid,
+        name: user.name,
+        email: user.email
       }, secretKey!, {
-        expiresIn: 86400 // 24 hours
+        expiresIn: 60 * 60 * 1 // 1 hour
       })
 
       res.status(200).json({ user, token })
@@ -51,6 +46,7 @@ class UserController {
 
   async register (req: Request, res: Response) : Promise<void> {
     try {
+      const secretKey = process.env.SECRET_KEY
       const { email, password } = req.body
 
       const user = await this.repository.getOne(email)
@@ -62,12 +58,57 @@ class UserController {
 
       const hash = await bcrypt.hash(password, 5)
 
-      const response = await this.repository.create({
+      const response = await this.repository.save({
         ...req.body,
         uid: uuidv4(),
         password: hash,
-        createdAt: new Date()
+        createdAt: new Date(),
+        pokemonsLiked: []
       })
+
+      const token = jwt.sign({
+        uid: response.uid,
+        name: response.name,
+        email: response.email
+      }, secretKey!, {
+        expiresIn: 60 * 60 * 1 // 1 hour
+      })
+
+      res.status(201).json({ user: response, token })
+    } catch (err) {
+      res.status(500).send({ message: err.message })
+    }
+  }
+
+  async recoverInformation (req: Request, res: Response) : Promise<void> {
+    try {
+      const { userDecoded } = req.body
+
+      const user = await this.repository.getOne(userDecoded.email)
+
+      if (user == null) {
+        res.status(404).send({ message: 'User not found' })
+        return
+      }
+
+      res.status(200).json({ user })
+    } catch (err) {
+      res.status(500).send({ message: err.message })
+    }
+  }
+
+  async update (req: Request, res: Response) : Promise<void> {
+    try {
+      const { user } = req.body
+
+      const userExists = await this.repository.getOne(user.email)
+
+      if (userExists == null) {
+        res.status(404).send({ message: 'User not found' })
+        return
+      }
+
+      const response = await this.repository.save(user)
 
       res.status(201).json({ user: response })
     } catch (err) {

@@ -1,4 +1,6 @@
 import styled from 'styled-components'
+import Link from 'next/link'
+import { Form as Unform } from '@unform/web'
 
 export const Container = styled.main`
   height: 100vh;
@@ -41,37 +43,6 @@ export const Content = styled.div`
     }
   }
 
-  form {
-    margin: 2rem 0;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    input + input {
-      margin-top: 0.5rem;
-    }
-
-    input + button {
-      margin-top: 1rem;
-    }
-
-    > span {
-      margin-top: 1rem;
-
-      a {
-        color: var(--primary);
-
-        transition: filter 0.4s;
-
-        &:hover {
-          filter: brightness(0.9);
-        }
-      }
-    }
-  }
-
   footer {
     width: 30%;
 
@@ -79,6 +50,27 @@ export const Content = styled.div`
     bottom: 0;
 
     margin-bottom: 1rem;
+  }
+`
+
+export const Form = styled(Unform)`
+  margin: 2rem 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  div + div {
+    margin-top: 0.5rem;
+  }
+
+  div + button {
+    margin-top: 1rem;
+  }
+
+  > span {
+    margin-top: 1rem;
   }
 `
 
@@ -101,5 +93,16 @@ export const Divider = styled.div`
     background: var(--blue-200);
     width: 100%;
     height: 1px;
+  }
+`
+
+export const TextLink = styled(Link)`
+  color: var(--primary);
+  background: transparent;
+
+  transition: filter 0.4s;
+
+  &:hover {
+    filter: brightness(0.9);
   }
 `

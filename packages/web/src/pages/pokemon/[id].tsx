@@ -1,6 +1,10 @@
-import { GetServerSideProps } from 'next'
 import Head from 'next/head'
+import { GetServerSideProps } from 'next'
 import { useState } from 'react'
+import { parseCookies } from 'nookies'
+
+import { getApiClient } from '../../services/axios'
+import { usePokemons } from '../../hooks/usePokemons'
 
 import { Header } from '../../components/Header'
 import { LikeButton } from '../../components/LikeButton'
@@ -28,28 +32,31 @@ interface PokemonDetailsProps {
 }
 
 export default function PokemonDetails({ data }: PokemonDetailsProps) {
+  const { handleLike } = usePokemons()
+
   const [pokemon, setPokemon] = useState(data)
-  const formattedAbilities = pokemon.abilities
+
+  const heightFormatted = (Number(pokemon.height) / 10).toString()
+  const weightFormatted = (Number(pokemon.weight) / 10).toString()
+  const abilitiesFormatted = pokemon.abilities
     .join(', ')
     .replace(/\b\w/g, l => l.toUpperCase())
-  const formattedPokemonName = pokemon.name.replace(/\b\w/g, l =>
+  const pokemonNameFormatted = pokemon.name.replace(/\b\w/g, l =>
     l.toUpperCase()
   )
 
-  function handleLike(item: Pokemon) {
-    const pokemonUpdated = {
-      ...item,
-      isLiked: !item.isLiked
-    }
+  function handleClickLike(item: Pokemon) {
+    const pokemonUpdated = { ...item, isLiked: !pokemon.isLiked }
 
-    // call api user update
     setPokemon(pokemonUpdated)
+
+    handleLike(item)
   }
 
   return (
     <>
       <Head>
-        <title>{formattedPokemonName} - Pokedex</title>
+        <title>{pokemonNameFormatted} - Pokedex</title>
       </Head>
 
       <Header />
@@ -60,18 +67,18 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
             <LikeButton
               className="like-button"
               pokemon={pokemon}
-              handleLike={() => handleLike(pokemon)}
+              handleLike={() => handleClickLike(pokemon)}
             />
           </header>
 
           <Band>
             <PokemonAvatar className="avatar">
-              <img src={pokemon.photo} alt={formattedPokemonName} />
+              <img src={pokemon.photo} alt={pokemonNameFormatted} />
             </PokemonAvatar>
 
             <h2>#{pokemon.id}</h2>
 
-            <h1>{formattedPokemonName}</h1>
+            <h1>{pokemonNameFormatted}</h1>
           </Band>
 
           <CardContent>
@@ -80,14 +87,14 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
                 <Fields>
                   <Field align="center">
                     <span>Altura</span>
-                    <p>{pokemon.height}m</p>
+                    <p>{heightFormatted}m</p>
                   </Field>
 
                   <Divider />
 
                   <Field align="center">
                     <span>Peso</span>
-                    <p>{pokemon.weight}kg</p>
+                    <p>{weightFormatted}kg</p>
                   </Field>
                 </Fields>
               </ColumnLeft>
@@ -96,7 +103,7 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
                 <Fields>
                   <Field align="start">
                     <span>Habilidade</span>
-                    <p>{formattedAbilities}</p>
+                    <p>{abilitiesFormatted}</p>
                   </Field>
 
                   <Divider />
@@ -117,6 +124,8 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
               {pokemon.evolutions.length - 1 >= 1 &&
                 pokemon.evolutions.map(evolution => (
                   <>
+                    <img src="/images/next.svg" alt="Evolui para..." />
+
                     <PokemonAvatarEvolution>
                       <img src={evolution.photo} alt={evolution.name} />
 
@@ -129,8 +138,6 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
                         </p>
                       </Field>
                     </PokemonAvatarEvolution>
-
-                    <img src="/images/next.svg" alt="Evolui para..." />
                   </>
                 ))}
             </EvolutionRow>
@@ -141,120 +148,26 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const { id } = params
-  // const session = await getSession({ req })
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const apiClient = getApiClient(ctx)
+  const { '@Pokedex/token': token } = parseCookies(ctx)
 
-  // if (!session?.activeSubscription) {
-  //   return {
-  //     redirect: {
-  //       destination: '/',
-  //       permanent: false
-  //     }
-  //   }
-  // }
-
-  const pokemon = {
-    id,
-    name: 'bulbasaur',
-    photo:
-      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg',
-    height: '7',
-    weight: '69',
-    isLiked: true,
-    abilities: ['overgrow', 'chlorophyll'],
-    types: ['poison', 'grass'],
-    evolutions: [
-      {
-        id: 1,
-        name: 'bulbasaur',
-        photo:
-          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg',
-        height: 7,
-        weight: 69,
-        types: [
-          {
-            name: 'grass',
-            url: 'https://pokeapi.co/api/v2/type/12/'
-          },
-          {
-            name: 'poison',
-            url: 'https://pokeapi.co/api/v2/type/4/'
-          }
-        ],
-        abilities: [
-          {
-            name: 'overgrow',
-            url: 'https://pokeapi.co/api/v2/ability/65/'
-          },
-          {
-            name: 'chlorophyll',
-            url: 'https://pokeapi.co/api/v2/ability/34/'
-          }
-        ]
-      },
-      {
-        id: 2,
-        name: 'ivysaur',
-        photo:
-          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/2.svg',
-        height: 10,
-        weight: 130,
-        types: [
-          {
-            name: 'grass',
-            url: 'https://pokeapi.co/api/v2/type/12/'
-          },
-          {
-            name: 'poison',
-            url: 'https://pokeapi.co/api/v2/type/4/'
-          }
-        ],
-        abilities: [
-          {
-            name: 'overgrow',
-            url: 'https://pokeapi.co/api/v2/ability/65/'
-          },
-          {
-            name: 'chlorophyll',
-            url: 'https://pokeapi.co/api/v2/ability/34/'
-          }
-        ]
-      },
-      {
-        id: 3,
-        name: 'venusaur',
-        photo:
-          'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/3.svg',
-        height: 20,
-        weight: 1000,
-        types: [
-          {
-            name: 'grass',
-            url: 'https://pokeapi.co/api/v2/type/12/'
-          },
-          {
-            name: 'poison',
-            url: 'https://pokeapi.co/api/v2/type/4/'
-          }
-        ],
-        abilities: [
-          {
-            name: 'overgrow',
-            url: 'https://pokeapi.co/api/v2/ability/65/'
-          },
-          {
-            name: 'chlorophyll',
-            url: 'https://pokeapi.co/api/v2/ability/34/'
-          }
-        ]
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
       }
-    ]
+    }
   }
+
+  const { id } = ctx.params
+
+  const { data } = await apiClient.get(`/pokemon/${id}`)
 
   return {
     props: {
-      data: pokemon
+      data
     }
   }
 }

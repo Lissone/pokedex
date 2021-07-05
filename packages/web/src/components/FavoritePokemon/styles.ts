@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const Container = styled.div`
+export const Container = styled.button`
   height: 8.75rem;
   width: 8.75rem;
   cursor: pointer;

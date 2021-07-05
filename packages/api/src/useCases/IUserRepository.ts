@@ -1,4 +1,6 @@
-interface IUser {
+import { IPokemon } from './IPokemonRepository'
+
+interface IUserDecoded {
   uid: string
   name: string
   email: string
@@ -6,9 +8,18 @@ interface IUser {
   createdAt: Date
 }
 
-interface IUserRepository {
-  getOne(email: string) : Promise<IUser | undefined>
-  create(user: IUser) : Promise<IUser>
+interface IUser {
+  uid: string
+  name: string
+  email: string
+  password: string
+  createdAt: Date
+  pokemonsLiked: IPokemon[]
 }
 
-export { IUserRepository, IUser }
+interface IUserRepository {
+  getOne(email: string) : Promise<IUser | undefined>
+  save(user: IUser) : Promise<IUser>
+}
+
+export { IUserRepository, IUser, IUserDecoded }

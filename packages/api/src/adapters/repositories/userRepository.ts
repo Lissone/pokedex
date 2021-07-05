@@ -21,26 +21,15 @@ class UserRepository implements IUserRepository {
       name: user.name,
       email: user.email,
       password: user.password,
-      createdAt: user.createdAt
+      createdAt: user.createdAt,
+      pokemonsLiked: user.pokemonsLiked
     }
   }
 
-  async create ({ uid, name, email, password, createdAt }: IUser) : Promise<IUser> {
-    await this.repository.doc(email.toLowerCase()).set({
-      uid,
-      name,
-      email,
-      password,
-      createdAt
-    })
+  async save (user: IUser) : Promise<IUser> {
+    await this.repository.doc(user.email.toLowerCase()).set(user)
 
-    return {
-      uid,
-      name,
-      email,
-      password,
-      createdAt
-    }
+    return user
   }
 }
 
