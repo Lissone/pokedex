@@ -18,11 +18,6 @@ class UserController {
 
       const { email, password } = req.body
 
-      if (!email || !password) {
-        res.status(400).send({ message: 'Required email and password' })
-        return
-      }
-
       const user = await this.repository.getOne(email)
 
       if (user == null) {

@@ -16,6 +16,7 @@
     "@unform/core": "^2.1.6",
     "@unform/web": "^2.1.6",
     "axios": "^0.21.1",
+    "firebase": "^8.7.0",
     "jsonwebtoken": "^8.5.1",
     "next": "11.0.0",
     "nookies": "^2.5.2",

@@ -10,6 +10,7 @@ import jwt from 'jsonwebtoken'
 import Router from 'next/router'
 
 import { api } from '../services/api'
+import { firebase, auth } from '../services/firebase'
 
 import { Pokemon } from '../components/PokemonCard'
 
@@ -38,6 +39,7 @@ interface AuthContextType {
   setUser: (user: User | null) => void
   isAuthenticated: boolean
   signInWithEmailPassword: (data: SignInData) => Promise<void>
+  signInWithGoogle: () => Promise<void>
   signUp: (data: SignUpData) => Promise<void>
   signOut: () => Promise<void>
 }
@@ -52,6 +54,7 @@ export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<User | null>(null)
+  const [googleUser, setGoogleUser] = useState<SignUpData>(null)
   const isAuthenticated = !!user
 
   useEffect(() => {
@@ -122,6 +125,39 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
     }
   }
 
+  async function signInWithGoogle() {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider()
+
+      const result = await auth.signInWithPopup(provider)
+
+      if (result.user) {
+        const { displayName, email, uid } = result.user
+
+        if (!displayName) {
+          throw new Error('Missing information from Google Account')
+        }
+
+        setGoogleUser({
+          name: displayName,
+          email,
+          password: uid
+        })
+
+        await signInWithEmailPassword({ email, password: uid })
+      }
+    } catch (err) {
+      err.name = ''
+
+      if (err.toString() === 'Usuário não esta cadastrado') {
+        await signUp(googleUser)
+        return
+      }
+
+      throw new Error(err)
+    }
+  }
+
   async function signOut() {
     await destroyCookie(undefined, '@Pokedex/token')
 
@@ -137,6 +173,7 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
         setUser,
         isAuthenticated,
         signInWithEmailPassword,
+        signInWithGoogle,
         signUp,
         signOut
       }}

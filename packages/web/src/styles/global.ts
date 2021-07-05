@@ -13,6 +13,8 @@ export const GlobalStyle = createGlobalStyle`
     // pallet
     --white: #FAFAFA;
 
+    --red-200: #EA4335;
+    
     --blue-200: #A1B2CD;
     --blue-900: #282D34;
 
