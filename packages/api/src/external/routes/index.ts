@@ -1,9 +1,11 @@
 import { Router } from 'express'
 
-import { loginRoutes } from './loginRoute'
+import { userRoutes } from './userRoutes'
+import { pokemonRoutes } from './pokemonRoutes'
 
 const apiRoutes = Router()
 
-apiRoutes.use('/api/v1/login', loginRoutes)
+apiRoutes.use('/api/v1/user', userRoutes)
+apiRoutes.use('/api/v1/pokemon', pokemonRoutes)
 
 export { apiRoutes }
