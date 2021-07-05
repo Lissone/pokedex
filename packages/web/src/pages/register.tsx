@@ -3,8 +3,10 @@ import { GetServerSideProps } from 'next'
 import { useRef, useState } from 'react'
 import * as Yup from 'yup'
 import { parseCookies } from 'nookies'
-import { AiFillGithub } from 'react-icons/ai'
+import { AiOutlineGoogle } from 'react-icons/ai'
 import { toast } from 'react-toastify'
+
+import { useAuth } from '../hooks/useAuth'
 
 import { Button } from '../components/Button'
 import { Input } from '../components/Input'
@@ -17,7 +19,6 @@ import {
   Divider,
   TextLink
 } from '../styles/loginRegister'
-import { useAuth } from '../hooks/useAuth'
 
 interface SignUpData {
   name: string
@@ -27,7 +28,7 @@ interface SignUpData {
 }
 
 export default function Register() {
-  const { signUp } = useAuth()
+  const { signUp, signInWithGoogle } = useAuth()
 
   const formRef = useRef(null)
   const [loading, setLoading] = useState(false)
@@ -101,8 +102,13 @@ export default function Register() {
           </header>
 
           <Form ref={formRef} onSubmit={handleSubmit}>
-            <Button type="button" title="GITHUB" color="blue-900">
-              <AiFillGithub size={25} />
+            <Button
+              type="button"
+              title="Google"
+              color="red-200"
+              onClick={signInWithGoogle}
+            >
+              <AiOutlineGoogle size={35} />
             </Button>
 
             <Divider>
