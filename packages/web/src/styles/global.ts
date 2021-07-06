@@ -94,7 +94,32 @@ export const GlobalStyle = createGlobalStyle`
     cursor: pointer;
   }
 
+  [disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
   .Toastify__toast-container {
     width: 30%;
+  }
+
+  ::-webkit-scrollbar {
+    width: 1.3rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 0.65rem;
+    border: 6px solid transparent;
+    
+    background: var(--gray-600);
+    background-clip: content-box;
+
+    &:hover {
+      background-color: var(--blue-200);
+    }
   }
 `
