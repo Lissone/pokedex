@@ -35,7 +35,7 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
   const { user, setUser } = useAuth()
 
   const [pokemons, setPokemons] = useState<Pokemon[]>([])
-  const [page, setPage] = useState<string | null>('?offset=0&limit=20')
+  const [page, setPage] = useState<string | null>('?offset=0&limit=50')
 
   async function getPokemons() {
     try {
