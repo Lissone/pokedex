@@ -10,7 +10,7 @@ export const Container = styled.header`
   background: var(--gray-900);
 `
 export const Content = styled.main`
-  width: 73.125rem;
+  width: 76rem;
   height: 6.25rem;
 
   margin: 0 auto;
@@ -26,56 +26,38 @@ export const Content = styled.main`
     cursor: pointer;
   }
 
-  div {
+  button {
+    padding: 0.5rem 1.5rem;
+
     display: flex;
     align-items: center;
     justify-content: center;
 
-    gap: 2rem;
+    gap: 0.5rem;
+    border: 2px solid var(--gray-600);
+    border-radius: 0.5rem;
+
+    background: var(--gray-900);
 
     svg {
-      cursor: pointer;
+      height: 25px;
+      width: 25px;
 
-      transition: filter 0.4s;
-
-      &:hover {
-        filter: brightness(0.5);
-      }
+      color: var(--gray-600);
     }
 
-    button {
-      padding: 0.5rem 1.5rem;
+    span {
+      font-weight: 500;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      color: var(--white);
+    }
 
-      gap: 0.5rem;
-      border: 2px solid var(--gray-600);
-      border-radius: 0.5rem;
+    transition: all 0.4s;
 
-      background: var(--gray-900);
+    &:hover {
+      border-color: var(--gray-700);
 
-      svg {
-        height: 25px;
-        width: 25px;
-
-        color: var(--gray-600);
-      }
-
-      span {
-        font-weight: 500;
-
-        color: var(--white);
-      }
-
-      transition: all 0.4s;
-
-      &:hover {
-        border-color: var(--gray-700);
-
-        filter: brightness(0.8);
-      }
+      filter: brightness(0.8);
     }
   }
 `
