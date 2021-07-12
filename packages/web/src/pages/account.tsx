@@ -3,7 +3,7 @@ import { GetServerSideProps } from 'next'
 import { useState } from 'react'
 import { parseCookies } from 'nookies'
 
-import { User } from '../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth'
 import { Pokemon, usePokemons } from '../hooks/usePokemons'
 
 import { Header } from '../components/Header'
@@ -17,36 +17,18 @@ import {
   LikedPokemons,
   ListPokemonCards
 } from '../styles/account'
-import { getApiClient } from '../services/axios'
 
-interface AccountProps {
-  data: User
-}
-
-export default function Account({ data }: AccountProps) {
+export default function Account() {
+  const { user } = useAuth()
   const { handleLike, handleStar } = usePokemons()
 
   const [search, setSearch] = useState('')
   const [starIcon, setStarIcon] = useState(true)
-  const [pokemonPhoto, setPokemonPhoto] = useState<string | undefined>(
-    data?.pokemonStarred?.photo || undefined
-  )
 
   function handleClickStar(pokemon: Pokemon) {
     setStarIcon(false)
-    setPokemonPhoto(pokemon.photo)
 
     handleStar(pokemon)
-  }
-
-  function handleClickLike(pokemon: Pokemon) {
-    const pokemonsUpdated = data.pokemonsLiked.filter(
-      item => item.id !== pokemon.id
-    )
-
-    data.pokemonsLiked = pokemonsUpdated
-
-    handleLike(pokemon, data)
   }
 
   return (
@@ -60,11 +42,15 @@ export default function Account({ data }: AccountProps) {
       <Container>
         <Content>
           <header>
-            <FavoritePokemon photo={pokemonPhoto} />
+            <FavoritePokemon
+              photo={
+                user?.pokemonStarred ? user.pokemonStarred.photo : undefined
+              }
+            />
 
             <HeaderContent>
               <h1>Bem-vindo</h1>
-              <strong>{data?.name}</strong>
+              <strong>{user?.name}</strong>
 
               <span>Chegou a hora de entrar no mundo pokémon</span>
             </HeaderContent>
@@ -72,7 +58,7 @@ export default function Account({ data }: AccountProps) {
             <div />
           </header>
 
-          {data?.pokemonsLiked.length > 0 && (
+          {user?.pokemonsLiked.length > 0 && (
             <LikedPokemons>
               <header>
                 <h2>Pokémons curtidos</h2>
@@ -85,7 +71,7 @@ export default function Account({ data }: AccountProps) {
               />
 
               <ListPokemonCards>
-                {data.pokemonsLiked
+                {user?.pokemonsLiked
                   .filter(pokemon => {
                     if (search === '') {
                       return pokemon
@@ -104,7 +90,7 @@ export default function Account({ data }: AccountProps) {
                       key={pokemon.id}
                       pokemon={pokemon}
                       starIcon={starIcon}
-                      handleLike={() => handleClickLike(pokemon)}
+                      handleLike={() => handleLike(pokemon, user)}
                       handleStar={() => handleClickStar(pokemon)}
                     />
                   ))}
@@ -118,7 +104,6 @@ export default function Account({ data }: AccountProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const apiClient = getApiClient(ctx)
   const { '@Pokedex/token': token } = parseCookies(ctx)
 
   if (!token) {
@@ -130,11 +115,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     }
   }
 
-  const { data } = await apiClient.get('/user/recover')
-
   return {
-    props: {
-      data: data.user
-    }
+    props: {}
   }
 }

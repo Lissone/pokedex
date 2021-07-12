@@ -56,20 +56,14 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [googleUser, setGoogleUser] = useState<SignUpData>(null)
 
-  async function parseUserCookie() {
+  useEffect(() => {
     const { '@Pokedex/token': token } = parseCookies()
 
     if (token) {
       api.defaults.headers.authorization = `Bearer ${token}`
 
-      const { data } = await api.get('/user/recover')
-
-      setUser(data.user)
+      api.get('/user/recover').then(({ data }) => setUser(data.user))
     }
-  }
-
-  useEffect(() => {
-    parseUserCookie()
   }, [])
 
   async function signInWithEmailPassword({ email, password }: SignInData) {
