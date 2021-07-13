@@ -20,7 +20,7 @@ interface PokemonContextType {
   pokemons: Pokemon[]
   page: string
   getPokemons: () => void
-  savePokemonsStorage: (page: string, pokemon: Pokemon[]) => Promise<void>
+  savePokemonsStorage: (page: string, pokemon: Pokemon[]) => void
   handleLike: (pokemon: Pokemon, user?: User) => void
   handleStar: (pokemon: Pokemon) => void
 }
@@ -38,15 +38,6 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
   const [page, setPage] = useState<string | null>('?offset=0&limit=50')
 
   function getPokemons() {
-    if (pokemons.length <= 0) {
-      api.get(`/pokemon/${page}`).then(({ data }) => {
-        setPage(data.nextPage)
-        setPokemons(data.pokemons)
-      })
-
-      return
-    }
-
     const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
 
     if (storagedListPokemons) {
@@ -54,10 +45,15 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
 
       setPage(storageParsed.nextPage)
       setPokemons(storageParsed.pokemons)
+    } else if (pokemons.length <= 0) {
+      api.get(`/pokemon/${page}`).then(({ data }) => {
+        setPage(data.nextPage)
+        setPokemons(data.pokemons)
+      })
     }
   }
 
-  async function savePokemonsStorage(nextPage: string, data: Pokemon[]) {
+  function savePokemonsStorage(nextPage: string, data: Pokemon[]) {
     if (!data) {
       return
     }
