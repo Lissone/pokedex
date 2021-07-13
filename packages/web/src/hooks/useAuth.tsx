@@ -54,7 +54,6 @@ export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<User | null>(null)
-  const [googleUser, setGoogleUser] = useState<SignUpData>(null)
 
   useEffect(() => {
     const { '@Pokedex/token': token } = parseCookies()
@@ -75,11 +74,11 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
       api.defaults.headers.authorization = `Bearer ${data.token}`
 
-      const { exp } = await jwt.verify(data.token, secretKey)
+      const { exp } = jwt.verify(data.token, secretKey)
 
       const tokenExpire = new Date(exp * 1000)
 
-      await setCookie(undefined, '@Pokedex/token', data.token, {
+      setCookie(undefined, '@Pokedex/token', data.token, {
         expires: tokenExpire
       })
 
@@ -104,11 +103,11 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
       api.defaults.headers.authorization = `Bearer ${data.token}`
 
-      const { exp } = await jwt.verify(data.token, secretKey)
+      const { exp } = jwt.verify(data.token, secretKey)
 
       const tokenExpire = new Date(exp * 1000)
 
-      await setCookie(undefined, '@Pokedex/token', data.token, {
+      setCookie(undefined, '@Pokedex/token', data.token, {
         expires: tokenExpire
       })
 
@@ -139,19 +138,20 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
           throw new Error('Missing information from Google Account')
         }
 
-        setGoogleUser({
-          name: displayName,
-          email,
-          password: uid
-        })
+        signInWithEmailPassword({ email, password: uid }).catch(ret => {
+          ret.name = ''
 
-        await signInWithEmailPassword({ email, password: uid })
+          if (ret.toString() === 'Usuário não esta cadastrado') {
+            signUp({
+              name: displayName,
+              email,
+              password: uid
+            })
+          }
+        })
       }
     } catch (err) {
-      err.name = ''
-
-      if (err.toString() === 'Usuário não esta cadastrado') {
-        await signUp(googleUser)
+      if (err.code === 'auth/popup-closed-by-user') {
         return
       }
 
