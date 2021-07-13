@@ -7,7 +7,7 @@ export const Container = styled.header`
   -webkit-box-shadow: 0px 0px 50px 5px rgba(0, 0, 0, 0.25);
   box-shadow: 0px 0px 50px 5px rgba(0, 0, 0, 0.25);
 
-  background: var(--gray-900);
+  background: var(--blue-gray-900);
 `
 export const Content = styled.main`
   width: 76rem;
@@ -37,13 +37,15 @@ export const Content = styled.main`
     border: 2px solid var(--gray-600);
     border-radius: 0.5rem;
 
-    background: var(--gray-900);
+    background: var(--blue-gray-900);
 
     svg {
       height: 25px;
       width: 25px;
 
       color: var(--gray-600);
+
+      transition: color 0.4s;
     }
 
     span {
@@ -52,12 +54,14 @@ export const Content = styled.main`
       color: var(--white);
     }
 
-    transition: all 0.4s;
+    transition: border-color 0.4s;
 
     &:hover {
       border-color: var(--gray-700);
 
-      filter: brightness(0.8);
+      svg {
+        color: var(--gray-700);
+      }
     }
   }
 `
