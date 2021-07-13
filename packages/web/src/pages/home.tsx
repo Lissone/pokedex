@@ -62,7 +62,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Home - Pokedex</title>
+        <title>Início - Pokedex</title>
       </Head>
 
       <Container>
