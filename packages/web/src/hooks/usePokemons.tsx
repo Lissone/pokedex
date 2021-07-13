@@ -19,7 +19,7 @@ export interface Pokemon {
 interface PokemonContextType {
   pokemons: Pokemon[]
   page: string
-  getPokemons: () => Promise<void>
+  getPokemons: () => void
   savePokemonsStorage: (page: string, pokemon: Pokemon[]) => Promise<void>
   handleLike: (pokemon: Pokemon, user?: User) => void
   handleStar: (pokemon: Pokemon) => void
@@ -37,26 +37,23 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
   const [pokemons, setPokemons] = useState<Pokemon[]>([])
   const [page, setPage] = useState<string | null>('?offset=0&limit=50')
 
-  async function getPokemons() {
-    try {
-      if (pokemons.length <= 0) {
-        const url = `/pokemon/${page}`
-        const { data } = await api.get(url)
-
+  function getPokemons() {
+    if (pokemons.length <= 0) {
+      api.get(`/pokemon/${page}`).then(({ data }) => {
         setPage(data.nextPage)
         setPokemons(data.pokemons)
-      }
+      })
 
-      const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
+      return
+    }
 
-      if (storagedListPokemons) {
-        const storageParsed = JSON.parse(storagedListPokemons)
+    const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
 
-        setPage(storageParsed.nextPage)
-        setPokemons(storageParsed.pokemons)
-      }
-    } catch (err) {
-      throw new Error(err)
+    if (storagedListPokemons) {
+      const storageParsed = JSON.parse(storagedListPokemons)
+
+      setPage(storageParsed.nextPage)
+      setPokemons(storageParsed.pokemons)
     }
   }
 
@@ -76,13 +73,12 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
 
   function handleLike(pokemon: Pokemon, userData?: User) {
     let userUpdated: User
-    let pokemonsUpdated: Pokemon[]
+
+    const pokemonsUpdated = pokemons.map(item =>
+      item.id === pokemon.id ? { ...item, isLiked: !pokemon.isLiked } : item
+    )
 
     if (!userData) {
-      pokemonsUpdated = pokemons.map(item =>
-        item.id === pokemon.id ? { ...item, isLiked: !pokemon.isLiked } : item
-      )
-
       const pokemonUpdated = pokemonsUpdated.filter(
         item => item.id === pokemon.id
       )

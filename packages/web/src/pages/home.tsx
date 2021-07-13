@@ -34,11 +34,9 @@ export default function Home() {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    setLoading(true)
+    getPokemons()
 
-    getPokemons().then(() => {
-      setLoading(false)
-    })
+    setLoading(false)
   }, [])
 
   function handleMorePokemons() {
@@ -49,7 +47,7 @@ export default function Home() {
     setLoading(true)
     api
       .get(`/pokemon/${page}`)
-      .then(async ({ data }) => {
+      .then(({ data }) => {
         setLoading(false)
 
         savePokemonsStorage(data.nextPage, [...pokemons, ...data.pokemons])
