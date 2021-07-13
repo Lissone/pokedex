@@ -68,7 +68,6 @@ export default function Register() {
       formRef.current.setErrors({})
     } catch (err) {
       err.name = ''
-      reset()
       setLoading(false)
 
       if (err instanceof Yup.ValidationError) {
@@ -80,6 +79,8 @@ export default function Register() {
 
         formRef.current.setErrors(errorMessages)
       } else {
+        reset()
+
         toast.error(err.toString(), {
           hideProgressBar: true
         })
@@ -111,14 +112,10 @@ export default function Register() {
               <AiOutlineGoogle size={35} />
             </Button>
 
-            <Divider>
-              <div />
-              <div>ou</div>
-              <div />
-            </Divider>
+            <Divider>ou</Divider>
 
-            <Input name="name" placeholder="Nome" type="text" />
-            <Input name="email" placeholder="E-mail" type="email" />
+            <Input name="name" placeholder="Nome" />
+            <Input name="email" placeholder="E-mail" />
             <Input name="password" placeholder="Senha" type="password" />
             <Input
               name="confirmPassword"
