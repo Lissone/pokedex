@@ -21,19 +21,6 @@ export const Content = styled.div`
 
   background: var(--gray-750);
 
-  > header {
-    height: 11.875rem;
-
-    display: flex;
-    justify-content: space-between;
-
-    border-bottom: 1px solid var(--gray-600);
-
-    div + div {
-      width: 8.75rem;
-    }
-  }
-
   input {
     height: 3.125rem;
     width: 21rem;
@@ -55,30 +42,6 @@ export const Content = styled.div`
     &::placeholder {
       color: var(--blue-200);
     }
-  }
-`
-
-export const HeaderContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  text-align: center;
-
-  h1 {
-    font-weight: 200;
-    font-size: 1.7rem;
-    letter-spacing: 0.2rem;
-  }
-
-  strong {
-    font-size: 1.7rem;
-  }
-
-  span {
-    font-weight: 200;
-
-    color: var(--blue-200);
   }
 `
 

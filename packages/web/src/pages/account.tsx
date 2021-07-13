@@ -8,13 +8,11 @@ import { useAuth } from '../hooks/useAuth'
 import { Pokemon, usePokemons } from '../hooks/usePokemons'
 
 import { Header } from '../components/Header'
-import { FavoritePokemon } from '../components/FavoritePokemon'
 import { PokemonCard } from '../components/PokemonCard'
 
 import {
   Container,
   Content,
-  HeaderContent,
   LikedPokemons,
   ListPokemonCards
 } from '../styles/account'
@@ -46,26 +44,12 @@ export default function Account() {
         <title>Seu perfil - Pokedex</title>
       </Head>
 
-      <Header />
-
       <Container>
         <Content>
-          <header>
-            <FavoritePokemon
-              photo={
-                user?.pokemonStarred ? user.pokemonStarred.photo : undefined
-              }
-            />
-
-            <HeaderContent>
-              <h1>Bem-vindo</h1>
-              <strong>{user?.name}</strong>
-
-              <span>Chegou a hora de entrar no mundo pokémon</span>
-            </HeaderContent>
-
-            <div />
-          </header>
+          <Header
+            heading="Conta"
+            description="Customize seu perfil e escolha seu pokémon favorito"
+          />
 
           {user?.pokemonsLiked.length > 0 && (
             <LikedPokemons>

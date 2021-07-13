@@ -6,27 +6,23 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 
 import { api } from '../services/api'
-import { useAuth } from '../hooks/useAuth'
 import { usePokemons } from '../hooks/usePokemons'
 
-import { Header } from '../components/Header'
-import { FavoritePokemon } from '../components/FavoritePokemon'
 import { PokemonCard } from '../components/PokemonCard'
 import { Load } from '../components/Load'
 
 import {
   Container,
   Content,
-  HeaderContent,
   ListPokemonCards,
   FooterContent,
   MorePokemons
 } from '../styles/home'
+import { Header } from '../components/Header'
 
 export default function Home() {
   const router = useRouter()
 
-  const { user } = useAuth()
   const { pokemons, savePokemonsStorage, getPokemons, page, handleLike } =
     usePokemons()
 
@@ -59,16 +55,6 @@ export default function Home() {
       })
   }
 
-  function handleClickPokemonAvatar() {
-    if (user.pokemonsLiked.length <= 0) {
-      toast.info('Curta um pokémon para selecionar o seu favorito 😊')
-
-      return
-    }
-
-    router.push('/account')
-  }
-
   function handleClickPokemonCard(pokemonId: string) {
     router.push(`/pokemon/${pokemonId}`)
   }
@@ -79,27 +65,9 @@ export default function Home() {
         <title>Home - Pokedex</title>
       </Head>
 
-      <Header />
-
       <Container>
         <Content>
-          <header>
-            <FavoritePokemon
-              onClick={handleClickPokemonAvatar}
-              photo={
-                user?.pokemonStarred ? user.pokemonStarred.photo : undefined
-              }
-            />
-
-            <HeaderContent>
-              <h1>Bem-vindo</h1>
-              <strong>{user?.name}</strong>
-
-              <span>Chegou a hora de entrar no mundo pokémon</span>
-            </HeaderContent>
-
-            <div />
-          </header>
+          <Header />
 
           <input
             placeholder="Pesquise pelo nome do pokémon"
