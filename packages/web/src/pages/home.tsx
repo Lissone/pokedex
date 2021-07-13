@@ -60,6 +60,12 @@ export default function Home() {
   }
 
   function handleClickPokemonAvatar() {
+    if (user.pokemonsLiked.length <= 0) {
+      toast.info('Curta um pokémon para selecionar o seu favorito 😊')
+
+      return
+    }
+
     router.push('/account')
   }
 

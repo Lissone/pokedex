@@ -1,7 +1,8 @@
 import Head from 'next/head'
 import { GetServerSideProps } from 'next'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { parseCookies } from 'nookies'
+import { useRouter } from 'next/router'
 
 import { useAuth } from '../hooks/useAuth'
 import { Pokemon, usePokemons } from '../hooks/usePokemons'
@@ -19,11 +20,19 @@ import {
 } from '../styles/account'
 
 export default function Account() {
+  const router = useRouter()
+
   const { user } = useAuth()
   const { handleLike, handleStar } = usePokemons()
 
   const [search, setSearch] = useState('')
   const [starIcon, setStarIcon] = useState(true)
+
+  useEffect(() => {
+    if (user?.pokemonsLiked.length <= 0) {
+      router.push('/')
+    }
+  }, [user])
 
   function handleClickStar(pokemon: Pokemon) {
     setStarIcon(false)
