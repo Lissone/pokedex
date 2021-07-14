@@ -79,7 +79,7 @@ export const Fields = styled.div`
 `
 
 export const Field = styled.div`
-  width: 11.3rem;
+  width: 9.3rem;
 
   display: flex;
   flex-direction: column;
@@ -99,7 +99,7 @@ export const Field = styled.div`
 `
 
 export const Divider = styled.div`
-  width: 5.25rem;
+  width: 7rem;
   height: 9.8125rem;
 
   display: flex;

@@ -21,12 +21,13 @@ class PokemonRepository implements IPokemonRepository {
   async getOne (name: string, user: IUser, singleConsult: boolean) : Promise<IPokemon | undefined> {
     const { data } = await api.get(`/pokemon/${name}`)
 
+    const { 'official-artwork': artWork } = data.sprites.other
     const evolutions = singleConsult ? await this.getAllEvolutions(data.id) : null
 
     const pokemon: IPokemon = {
       id: data.id,
       name: data.name,
-      photo: data.sprites.other.dream_world.front_default,
+      photo: data.sprites.other.dream_world.front_default || artWork.front_default || data.sprites.front_default,
       height: data.height,
       weight: data.weight,
       isLiked: user.pokemonsLiked ? user.pokemonsLiked.some(pokemon => pokemon.id === data.id) : false,
@@ -47,11 +48,12 @@ class PokemonRepository implements IPokemonRepository {
     const evolutionChain = await api(data.evolution_chain.url)
 
     const pokemon = await api.get(`/pokemon/${evolutionChain.data.chain.species.name}`)
+    const { 'official-artwork': artWork } = pokemon.data.sprites.other
 
     const pokemonUpdated: IPokemon = {
       id: pokemon.data.id,
       name: pokemon.data.name,
-      photo: pokemon.data.sprites.other.dream_world.front_default,
+      photo: pokemon.data.sprites.other.dream_world.front_default || artWork.front_default || pokemon.data.sprites.front_default,
       height: pokemon.data.height,
       weight: pokemon.data.weight,
       types: pokemon.data.types.map(object => object.type),
@@ -64,11 +66,12 @@ class PokemonRepository implements IPokemonRepository {
       const evolution = await api(evolutionChain.data.chain.evolves_to[0].species.url)
 
       const pokemon = await api.get(`/pokemon/${evolution.data.id}`)
+      const { 'official-artwork': artWorkEvolution } = pokemon.data.sprites.other
 
       const pokemonUpdated: IPokemon = {
         id: pokemon.data.id,
         name: pokemon.data.name,
-        photo: pokemon.data.sprites.other.dream_world.front_default,
+        photo: pokemon.data.sprites.other.dream_world.front_default || artWorkEvolution.front_default || pokemon.data.sprites.front_default,
         height: pokemon.data.height,
         weight: pokemon.data.weight,
         types: pokemon.data.types.map(object => object.type),
@@ -85,11 +88,12 @@ class PokemonRepository implements IPokemonRepository {
       const evolution = await api(evolutionChain.data.chain.evolves_to[0].evolves_to[0].species.url)
 
       const pokemon = await api.get(`/pokemon/${evolution.data.id}`)
+      const { 'official-artwork': artWorkEvolution2 } = pokemon.data.sprites.other
 
       const pokemonUpdated: IPokemon = {
         id: pokemon.data.id,
         name: pokemon.data.name,
-        photo: pokemon.data.sprites.other.dream_world.front_default,
+        photo: pokemon.data.sprites.other.dream_world.front_default || artWorkEvolution2.front_default || pokemon.data.sprites.front_default,
         height: pokemon.data.height,
         weight: pokemon.data.weight,
         types: pokemon.data.types.map(object => object.type),

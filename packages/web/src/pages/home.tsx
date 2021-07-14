@@ -102,7 +102,7 @@ export default function Home() {
                   ))}
               </ListPokemonCards>
 
-              {!loading && (
+              {!loading && page !== null && (
                 <FooterContent>
                   <MorePokemons onClick={handleMorePokemons}>
                     <span>Carregar mais pokemons</span>
