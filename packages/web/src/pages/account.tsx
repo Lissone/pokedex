@@ -24,7 +24,6 @@ export default function Account() {
   const { handleLike, handleStar } = usePokemons()
 
   const [search, setSearch] = useState('')
-  const [starIcon, setStarIcon] = useState(true)
 
   useEffect(() => {
     if (user?.pokemonsLiked.length <= 0) {
@@ -33,9 +32,11 @@ export default function Account() {
   }, [user])
 
   function handleClickStar(pokemon: Pokemon) {
-    setStarIcon(false)
-
     handleStar(pokemon)
+  }
+
+  function handleClickPokemonCard(pokemonId: string) {
+    router.push(`/pokemon/${pokemonId}`)
   }
 
   return (
@@ -91,9 +92,10 @@ export default function Account() {
                     <PokemonCard
                       key={pokemon.id}
                       pokemon={pokemon}
-                      starIcon={starIcon}
                       handleLike={() => handleLike(pokemon, user)}
                       handleStar={() => handleClickStar(pokemon)}
+                      onClick={() => handleClickPokemonCard(pokemon.id)}
+                      starIcon
                     />
                   ))}
               </ListPokemonCards>

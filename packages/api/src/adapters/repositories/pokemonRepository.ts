@@ -31,7 +31,7 @@ class PokemonRepository implements IPokemonRepository {
       height: data.height,
       weight: data.weight,
       isLiked: user.pokemonsLiked ? user.pokemonsLiked.some(pokemon => pokemon.id === data.id) : false,
-      isStarred: user.pokemonStarred ? user.pokemonStarred.id === data.id : false,
+      isStarred: user.pokemonStarred !== null ? user.pokemonStarred.id === data.id : false,
       types: data.types.map(object => object.type.name),
       abilities: data.abilities.map(object => object.ability.name),
       evolutions

@@ -122,17 +122,23 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
       isStarred: !pokemon.isStarred
     }
 
-    const newUser: User = {
-      uid: user.uid,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      createdAt: user.createdAt,
+    const pokemonsUpdated = pokemons.map(item =>
+      item.id === pokemon.id ? pokemonUpdated : { ...item, isStarred: false }
+    )
+
+    const userUpdated: User = {
+      ...user,
       pokemonStarred: pokemonUpdated,
-      pokemonsLiked: user.pokemonsLiked
+      pokemonsLiked: user.pokemonsLiked.map(item =>
+        item.id === pokemon.id ? pokemonUpdated : { ...item, isStarred: false }
+      )
     }
 
-    api.put('/user/', { user: newUser }).then(({ data }) => setUser(data.user))
+    savePokemonsStorage(page, pokemonsUpdated)
+
+    api
+      .put('/user/', { user: userUpdated })
+      .then(({ data }) => setUser(data.user))
   }
 
   return (
