@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { parseCookies } from 'nookies'
 import { useRouter } from 'next/router'
@@ -8,6 +8,7 @@ import { toast } from 'react-toastify'
 import { api } from '../services/api'
 import { usePokemons } from '../hooks/usePokemons'
 
+import { Header } from '../components/Header'
 import { PokemonCard } from '../components/PokemonCard'
 import { Load } from '../components/Load'
 
@@ -18,22 +19,20 @@ import {
   FooterContent,
   MorePokemons
 } from '../styles/home'
-import { Header } from '../components/Header'
 
 export default function Home() {
   const router = useRouter()
 
-  const { pokemons, savePokemonsStorage, getPokemons, page, handleLike } =
-    usePokemons()
+  const {
+    loading,
+    setLoading,
+    pokemons,
+    savePokemonsStorage,
+    page,
+    handleLike
+  } = usePokemons()
 
-  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-
-  useEffect(() => {
-    getPokemons()
-
-    setLoading(false)
-  }, [])
 
   function handleMorePokemons() {
     if (page === null) {

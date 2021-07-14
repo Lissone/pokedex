@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext, useState } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  useEffect
+} from 'react'
 
 import { useAuth, User } from './useAuth'
 import { api } from '../services/api'
@@ -19,7 +25,8 @@ export interface Pokemon {
 interface PokemonContextType {
   pokemons: Pokemon[]
   page: string
-  getPokemons: () => void
+  loading: boolean
+  setLoading: (loading: boolean) => void
   savePokemonsStorage: (page: string, pokemon: Pokemon[]) => void
   handleLike: (pokemon: Pokemon, user?: User) => void
   handleStar: (pokemon: Pokemon) => void
@@ -36,8 +43,9 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
 
   const [pokemons, setPokemons] = useState<Pokemon[]>([])
   const [page, setPage] = useState<string | null>('?offset=0&limit=50')
+  const [loading, setLoading] = useState(true)
 
-  function getPokemons() {
+  useEffect(() => {
     const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
 
     if (storagedListPokemons) {
@@ -51,7 +59,9 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
         setPokemons(data.pokemons)
       })
     }
-  }
+
+    setLoading(false)
+  }, [])
 
   function savePokemonsStorage(nextPage: string, data: Pokemon[]) {
     if (!data) {
@@ -129,9 +139,10 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
     <PokemonsContext.Provider
       value={{
         pokemons,
-        getPokemons,
         savePokemonsStorage,
         page,
+        loading,
+        setLoading,
         handleLike,
         handleStar
       }}
