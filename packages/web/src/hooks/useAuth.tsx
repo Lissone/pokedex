@@ -83,6 +83,7 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
       })
 
       setUser(data.user)
+      localStorage.removeItem('@Pokedex:pokemons')
 
       Router.push('/home')
     } catch (err) {
@@ -112,6 +113,7 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
       })
 
       setUser(data.user)
+      localStorage.removeItem('@Pokedex:pokemons')
 
       Router.push('/home')
     } catch (err) {
