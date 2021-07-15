@@ -1,47 +1,18 @@
 import styled from 'styled-components'
 
 export const Container = styled.header`
-  display: flex;
-  flex-direction: column;
-
-  -webkit-box-shadow: 0px 0px 50px 5px rgba(0, 0, 0, 0.25);
-  box-shadow: 0px 0px 50px 5px rgba(0, 0, 0, 0.25);
-
-  background: var(--gray-900);
-`
-export const Content = styled.main`
-  width: 73.125rem;
-  height: 6.25rem;
-
-  margin: 0 auto;
-  padding: 2rem 3.125rem;
+  height: 11.875rem;
 
   display: flex;
-  align-items: center;
   justify-content: space-between;
 
-  img {
-    width: 12.5rem;
-
-    cursor: pointer;
-  }
+  border-bottom: 1px solid var(--gray-600);
 
   div {
+    width: 8.75rem;
+
     display: flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 2rem;
-
-    svg {
-      cursor: pointer;
-
-      transition: filter 0.4s;
-
-      &:hover {
-        filter: brightness(0.5);
-      }
-    }
+    flex-direction: column;
 
     button {
       padding: 0.5rem 1.5rem;
@@ -51,16 +22,16 @@ export const Content = styled.main`
       justify-content: center;
 
       gap: 0.5rem;
-      border: 2px solid var(--gray-600);
+      border: 2px solid var(--blue-200);
       border-radius: 0.5rem;
 
-      background: var(--gray-900);
+      background: transparent;
 
       svg {
         height: 25px;
         width: 25px;
 
-        color: var(--gray-600);
+        color: var(--blue-200);
       }
 
       span {
@@ -69,13 +40,34 @@ export const Content = styled.main`
         color: var(--white);
       }
 
-      transition: all 0.4s;
+      transition: filter 0.4s;
 
       &:hover {
-        border-color: var(--gray-700);
-
-        filter: brightness(0.8);
+        filter: brightness(0.7);
       }
     }
+  }
+`
+export const Content = styled.main`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+
+  h1 {
+    font-weight: 200;
+    font-size: 1.7rem;
+    letter-spacing: 0.2rem;
+  }
+
+  strong {
+    font-size: 1.7rem;
+  }
+
+  span {
+    font-weight: 200;
+
+    color: var(--blue-200);
   }
 `

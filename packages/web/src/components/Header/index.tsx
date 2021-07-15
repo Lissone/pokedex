@@ -1,33 +1,58 @@
-import Link from 'next/link'
-import { FaUserAlt } from 'react-icons/fa'
+import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
 import { BiExit } from 'react-icons/bi'
 
 import { useAuth } from '../../hooks/useAuth'
 
+import { FavoritePokemon } from '../FavoritePokemon'
+
 import { Container, Content } from './styles'
 
-export function Header() {
-  const { signOut } = useAuth()
+interface HeaderProps {
+  heading?: string
+  description?: string
+}
+
+export function Header({ heading, description }: HeaderProps) {
+  const router = useRouter()
+
+  const { user, signOut } = useAuth()
+
+  function handleClickPokemonAvatar() {
+    if (router.pathname === '/account') {
+      return
+    }
+
+    if (user.pokemonsLiked.length <= 0) {
+      toast.info('Curta um pokémon para selecionar o seu favorito 😊')
+
+      return
+    }
+
+    router.push('/account')
+  }
 
   return (
     <Container>
+      <FavoritePokemon
+        onClick={handleClickPokemonAvatar}
+        photo={user?.pokemonStarred ? user.pokemonStarred.photo : undefined}
+      />
+
       <Content>
-        <Link href="/">
-          <img src="/images/logo.png" alt="Pokedex" />
-        </Link>
+        <h1>{heading || 'Bem-vindo'}</h1>
+        <strong>{user?.name}</strong>
 
-        <div>
-          <Link href="/account">
-            <FaUserAlt size={30} />
-          </Link>
-
-          <button type="button" onClick={signOut}>
-            <span>SAIR</span>
-
-            <BiExit size={10} />
-          </button>
-        </div>
+        <span>{description || 'Chegou a hora de entrar no mundo pokémon'}</span>
       </Content>
+
+      <div>
+        <button type="button" onClick={signOut}>
+          <span>SAIR</span>
+
+          <BiExit size={10} />
+        </button>
+      </div>
     </Container>
   )
 }

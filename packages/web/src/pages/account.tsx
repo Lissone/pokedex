@@ -1,54 +1,42 @@
 import Head from 'next/head'
 import { GetServerSideProps } from 'next'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { parseCookies } from 'nookies'
+import { useRouter } from 'next/router'
 
-import { User } from '../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth'
 import { Pokemon, usePokemons } from '../hooks/usePokemons'
 
 import { Header } from '../components/Header'
-import { FavoritePokemon } from '../components/FavoritePokemon'
 import { PokemonCard } from '../components/PokemonCard'
 
 import {
   Container,
   Content,
-  HeaderContent,
   LikedPokemons,
   ListPokemonCards
 } from '../styles/account'
-import { getApiClient } from '../services/axios'
 
-interface AccountProps {
-  data: User
-}
+export default function Account() {
+  const router = useRouter()
 
-export default function Account({ data }: AccountProps) {
+  const { user } = useAuth()
   const { handleLike, handleStar } = usePokemons()
 
   const [search, setSearch] = useState('')
-  const [starIcon, setStarIcon] = useState(true)
-  const [pokemonPhoto, setPokemonPhoto] = useState<string | undefined>(
-    data?.pokemonStarred?.photo || undefined
-  )
+
+  useEffect(() => {
+    if (user?.pokemonsLiked.length <= 0) {
+      router.push('/')
+    }
+  }, [user])
 
   function handleClickStar(pokemon: Pokemon) {
-    setStarIcon(false)
-    setPokemonPhoto(pokemon.photo)
-
-    const pokemonsLikedUpdate = data.pokemonsLiked.map(item => item.id)
-
     handleStar(pokemon)
   }
 
-  function handleClickLike(pokemon: Pokemon) {
-    const pokemonsUpdated = data.pokemonsLiked.filter(
-      item => item.id !== pokemon.id
-    )
-
-    data.pokemonsLiked = pokemonsUpdated
-
-    handleLike(pokemon)
+  function handleClickPokemonCard(pokemonId: string) {
+    router.push(`/pokemon/${pokemonId}`)
   }
 
   return (
@@ -57,24 +45,14 @@ export default function Account({ data }: AccountProps) {
         <title>Seu perfil - Pokedex</title>
       </Head>
 
-      <Header />
-
       <Container>
         <Content>
-          <header>
-            <FavoritePokemon photo={pokemonPhoto} />
+          <Header
+            heading="Perfil"
+            description="Customize seu perfil e escolha seu pokémon favorito"
+          />
 
-            <HeaderContent>
-              <h1>Bem-vindo</h1>
-              <strong>{data?.name}</strong>
-
-              <span>Chegou a hora de entrar no mundo pokémon</span>
-            </HeaderContent>
-
-            <div />
-          </header>
-
-          {data?.pokemonsLiked.length > 0 && (
+          {user?.pokemonsLiked.length > 0 && (
             <LikedPokemons>
               <header>
                 <h2>Pokémons curtidos</h2>
@@ -87,7 +65,7 @@ export default function Account({ data }: AccountProps) {
               />
 
               <ListPokemonCards>
-                {data.pokemonsLiked
+                {user?.pokemonsLiked
                   .filter(pokemon => {
                     if (search === '') {
                       return pokemon
@@ -101,13 +79,23 @@ export default function Account({ data }: AccountProps) {
 
                     return null
                   })
+                  .sort((a, b) => {
+                    if (a.id > b.id) {
+                      return 1
+                    }
+                    if (a.id < b.id) {
+                      return -1
+                    }
+                    return 0
+                  })
                   .map(pokemon => (
                     <PokemonCard
                       key={pokemon.id}
                       pokemon={pokemon}
-                      starIcon={starIcon}
-                      handleLike={() => handleClickLike(pokemon)}
+                      handleLike={() => handleLike(pokemon, user)}
                       handleStar={() => handleClickStar(pokemon)}
+                      onClick={() => handleClickPokemonCard(pokemon.id)}
+                      starIcon
                     />
                   ))}
               </ListPokemonCards>
@@ -120,7 +108,6 @@ export default function Account({ data }: AccountProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const apiClient = getApiClient(ctx)
   const { '@Pokedex/token': token } = parseCookies(ctx)
 
   if (!token) {
@@ -132,11 +119,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     }
   }
 
-  const { data } = await apiClient.get('/user/recover')
-
   return {
-    props: {
-      data: data.user
-    }
+    props: {}
   }
 }

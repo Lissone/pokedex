@@ -61,7 +61,7 @@ export const Form = styled(Unform)`
   align-items: center;
   justify-content: center;
 
-  div + div {
+  div + div + div {
     margin-top: 0.5rem;
   }
 
@@ -75,24 +75,34 @@ export const Form = styled(Unform)`
 `
 
 export const Divider = styled.div`
+  width: 100%;
+  margin: 2rem 0;
+
   display: flex;
   align-items: center;
 
-  margin: 1.5rem 0;
+  font-weight: 400;
+  line-height: 0;
+  color: var(--blue-200);
 
-  & div:nth-child(2) {
-    padding: 0 1.35rem;
+  &:before {
+    content: '';
+    flex: 1;
 
-    font-weight: 400;
-    line-height: 0;
-    color: var(--blue-200);
+    height: 1px;
+    margin-right: 0.875rem;
+
+    background: var(--blue-200);
   }
 
-  & div:nth-child(1),
-  & div:nth-child(3) {
-    background: var(--blue-200);
-    width: 100%;
+  &:after {
+    content: '';
+    flex: 1;
+
     height: 1px;
+    margin-left: 0.875rem;
+
+    background: var(--blue-200);
   }
 `
 

@@ -1,49 +1,38 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { parseCookies } from 'nookies'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 
-import { getApiClient } from '../services/axios'
 import { api } from '../services/api'
-import { User } from '../hooks/useAuth'
 import { usePokemons } from '../hooks/usePokemons'
 
 import { Header } from '../components/Header'
-import { FavoritePokemon } from '../components/FavoritePokemon'
 import { PokemonCard } from '../components/PokemonCard'
 import { Load } from '../components/Load'
 
 import {
   Container,
   Content,
-  HeaderContent,
   ListPokemonCards,
   FooterContent,
   MorePokemons
 } from '../styles/home'
 
-interface HomeProps {
-  user: User
-}
-
-export default function Home({ user }: HomeProps) {
+export default function Home() {
   const router = useRouter()
 
-  const { pokemons, savePokemonsStorage, getPokemons, page, handleLike } =
-    usePokemons()
+  const {
+    loading,
+    setLoading,
+    pokemons,
+    savePokemonsStorage,
+    page,
+    handleLike
+  } = usePokemons()
 
-  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-
-  useEffect(() => {
-    setLoading(true)
-
-    getPokemons().then(() => {
-      setLoading(false)
-    })
-  }, [])
 
   function handleMorePokemons() {
     if (page === null) {
@@ -53,7 +42,7 @@ export default function Home({ user }: HomeProps) {
     setLoading(true)
     api
       .get(`/pokemon/${page}`)
-      .then(async ({ data }) => {
+      .then(({ data }) => {
         setLoading(false)
 
         savePokemonsStorage(data.nextPage, [...pokemons, ...data.pokemons])
@@ -65,10 +54,6 @@ export default function Home({ user }: HomeProps) {
       })
   }
 
-  function handleClickPokemonAvatar() {
-    router.push('/account')
-  }
-
   function handleClickPokemonCard(pokemonId: string) {
     router.push(`/pokemon/${pokemonId}`)
   }
@@ -76,30 +61,12 @@ export default function Home({ user }: HomeProps) {
   return (
     <>
       <Head>
-        <title>Home - Pokedex</title>
+        <title>Início - Pokedex</title>
       </Head>
-
-      <Header />
 
       <Container>
         <Content>
-          <header>
-            <FavoritePokemon
-              onClick={handleClickPokemonAvatar}
-              photo={
-                user.pokemonStarred ? user.pokemonStarred.photo : undefined
-              }
-            />
-
-            <HeaderContent>
-              <h1>Bem-vindo</h1>
-              <strong>{user?.name}</strong>
-
-              <span>Chegou a hora de entrar no mundo pokémon</span>
-            </HeaderContent>
-
-            <div />
-          </header>
+          <Header />
 
           <input
             placeholder="Pesquise pelo nome do pokémon"
@@ -134,7 +101,7 @@ export default function Home({ user }: HomeProps) {
                   ))}
               </ListPokemonCards>
 
-              {!loading && (
+              {!loading && page !== null && (
                 <FooterContent>
                   <MorePokemons onClick={handleMorePokemons}>
                     <span>Carregar mais pokemons</span>
@@ -152,7 +119,6 @@ export default function Home({ user }: HomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ctx => {
-  const apiClient = getApiClient(ctx)
   const { '@Pokedex/token': token } = parseCookies(ctx)
 
   if (!token) {
@@ -164,11 +130,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     }
   }
 
-  const { data } = await apiClient.get('/user/recover')
-
   return {
-    props: {
-      user: data.user
-    }
+    props: {}
   }
 }

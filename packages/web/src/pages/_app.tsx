@@ -10,6 +10,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <GlobalStyle />
+
       <AuthProvider>
         <PokemonsProvider>
           <ToastContainer
