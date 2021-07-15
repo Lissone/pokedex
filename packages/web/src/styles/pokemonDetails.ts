@@ -43,7 +43,7 @@ export const Band = styled.div`
   height: 8.75rem;
   margin-top: 2rem;
   padding-left: 3.125rem;
-  padding-right: 9rem;
+  padding-right: 3.125rem;
 
   display: flex;
   align-items: center;

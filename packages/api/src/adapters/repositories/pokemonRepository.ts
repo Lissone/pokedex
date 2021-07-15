@@ -43,35 +43,17 @@ class PokemonRepository implements IPokemonRepository {
   async getAllEvolutions (id: string) : Promise<IPokemon[] | undefined> {
     const evolutions = [] as IPokemon[]
 
-    const { data } = await api.get(`/pokemon-species/${id}`)
+    await api.get(`/pokemon-species/${id}`).then(async ({ data }) => {
+      const evolutionChain = await api(data.evolution_chain.url)
 
-    const evolutionChain = await api(data.evolution_chain.url)
-
-    const pokemon = await api.get(`/pokemon/${evolutionChain.data.chain.species.name}`)
-    const { 'official-artwork': artWork } = pokemon.data.sprites.other
-
-    const pokemonUpdated: IPokemon = {
-      id: pokemon.data.id,
-      name: pokemon.data.name,
-      photo: pokemon.data.sprites.other.dream_world.front_default || artWork.front_default || pokemon.data.sprites.front_default,
-      height: pokemon.data.height,
-      weight: pokemon.data.weight,
-      types: pokemon.data.types.map(object => object.type),
-      abilities: pokemon.data.abilities.map(object => object.ability)
-    }
-
-    evolutions.push(pokemonUpdated)
-
-    if (evolutionChain.data.chain.evolves_to.length > 0) {
-      const evolution = await api(evolutionChain.data.chain.evolves_to[0].species.url)
-
-      const pokemon = await api.get(`/pokemon/${evolution.data.id}`)
-      const { 'official-artwork': artWorkEvolution } = pokemon.data.sprites.other
+      const basePokemon = await api(evolutionChain.data.chain.species.url)
+      const pokemon = await api.get(`/pokemon/${basePokemon.data.id}`)
+      const { 'official-artwork': artWork } = pokemon.data.sprites.other
 
       const pokemonUpdated: IPokemon = {
         id: pokemon.data.id,
         name: pokemon.data.name,
-        photo: pokemon.data.sprites.other.dream_world.front_default || artWorkEvolution.front_default || pokemon.data.sprites.front_default,
+        photo: pokemon.data.sprites.other.dream_world.front_default || artWork.front_default || pokemon.data.sprites.front_default,
         height: pokemon.data.height,
         weight: pokemon.data.weight,
         types: pokemon.data.types.map(object => object.type),
@@ -79,29 +61,50 @@ class PokemonRepository implements IPokemonRepository {
       }
 
       evolutions.push(pokemonUpdated)
-    }
 
-    if (
-      evolutionChain.data.chain.evolves_to.length > 0 &&
+      if (evolutionChain.data.chain.evolves_to.length > 0) {
+        const evolution = await api(evolutionChain.data.chain.evolves_to[0].species.url)
+
+        const pokemon = await api.get(`/pokemon/${evolution.data.id}`)
+        const { 'official-artwork': artWorkEvolution } = pokemon.data.sprites.other
+
+        const pokemonUpdated: IPokemon = {
+          id: pokemon.data.id,
+          name: pokemon.data.name,
+          photo: pokemon.data.sprites.other.dream_world.front_default || artWorkEvolution.front_default || pokemon.data.sprites.front_default,
+          height: pokemon.data.height,
+          weight: pokemon.data.weight,
+          types: pokemon.data.types.map(object => object.type),
+          abilities: pokemon.data.abilities.map(object => object.ability)
+        }
+
+        evolutions.push(pokemonUpdated)
+      }
+
+      if (
+        evolutionChain.data.chain.evolves_to.length > 0 &&
       evolutionChain.data.chain.evolves_to[0].evolves_to.length > 0
-    ) {
-      const evolution = await api(evolutionChain.data.chain.evolves_to[0].evolves_to[0].species.url)
+      ) {
+        const evolution = await api(evolutionChain.data.chain.evolves_to[0].evolves_to[0].species.url)
 
-      const pokemon = await api.get(`/pokemon/${evolution.data.id}`)
-      const { 'official-artwork': artWorkEvolution2 } = pokemon.data.sprites.other
+        const pokemon = await api.get(`/pokemon/${evolution.data.id}`)
+        const { 'official-artwork': artWorkEvolution2 } = pokemon.data.sprites.other
 
-      const pokemonUpdated: IPokemon = {
-        id: pokemon.data.id,
-        name: pokemon.data.name,
-        photo: pokemon.data.sprites.other.dream_world.front_default || artWorkEvolution2.front_default || pokemon.data.sprites.front_default,
-        height: pokemon.data.height,
-        weight: pokemon.data.weight,
-        types: pokemon.data.types.map(object => object.type),
-        abilities: pokemon.data.abilities.map(object => object.ability)
+        const pokemonUpdated: IPokemon = {
+          id: pokemon.data.id,
+          name: pokemon.data.name,
+          photo: pokemon.data.sprites.other.dream_world.front_default || artWorkEvolution2.front_default || pokemon.data.sprites.front_default,
+          height: pokemon.data.height,
+          weight: pokemon.data.weight,
+          types: pokemon.data.types.map(object => object.type),
+          abilities: pokemon.data.abilities.map(object => object.ability)
+        }
+
+        evolutions.push(pokemonUpdated)
       }
-
-      evolutions.push(pokemonUpdated)
-    }
+    }).catch(() => {
+      return undefined
+    })
 
     return evolutions
   }

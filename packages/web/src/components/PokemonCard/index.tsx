@@ -1,5 +1,6 @@
-import { LikeButton } from '../LikeButton'
+import Image from 'next/image'
 
+import { LikeButton } from '../LikeButton'
 import { StarButton } from '../StarButton'
 
 import { Container, PokemonAvatar, Fields, Field, Divider } from './styles'
@@ -40,7 +41,12 @@ export function PokemonCard({
     <Container>
       <div onClick={() => onClick(pokemon.id)}>
         <PokemonAvatar className="avatar">
-          <img src={pokemon.photo} alt={pokemon.name} />
+          <Image
+            width={64}
+            height={64}
+            src={pokemon.photo}
+            alt={pokemon.name}
+          />
         </PokemonAvatar>
 
         <Fields>
