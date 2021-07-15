@@ -25,10 +25,6 @@ export const GlobalStyle = createGlobalStyle`
     --gray-750: #444444;
     --gray-800: #3E3E3E;
 
-    --blue-gray-900: #13111B;
-
-    --black: #000000;
-
     // pokemon types colors
     --bug: #729f3f;
     --dragon: #53a4cf;
