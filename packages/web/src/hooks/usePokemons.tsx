@@ -5,6 +5,7 @@ import {
   useState,
   useEffect
 } from 'react'
+import { parseCookies } from 'nookies'
 
 import { useAuth, User } from './useAuth'
 import { api } from '../services/api'
@@ -24,9 +25,8 @@ export interface Pokemon {
 
 interface PokemonContextType {
   pokemons: Pokemon[]
+  getPokemons: () => void
   page: string
-  loading: boolean
-  setLoading: (loading: boolean) => void
   savePokemonsStorage: (page: string, pokemon: Pokemon[]) => void
   handleLike: (pokemon: Pokemon, user?: User) => void
   handleStar: (pokemon: Pokemon) => void
@@ -43,10 +43,13 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
 
   const [pokemons, setPokemons] = useState<Pokemon[]>([])
   const [page, setPage] = useState<string | null>('?offset=0&limit=50')
-  const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    if (!user) {
+  useEffect(() => getPokemons(), [])
+
+  function getPokemons() {
+    const { '@Pokedex/token': token } = parseCookies()
+
+    if (!token) {
       return
     }
 
@@ -63,9 +66,7 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
         setPokemons(data.pokemons)
       })
     }
-
-    setLoading(false)
-  }, [])
+  }
 
   function savePokemonsStorage(nextPage: string, data: Pokemon[]) {
     if (!data) {
@@ -151,8 +152,7 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
         pokemons,
         savePokemonsStorage,
         page,
-        loading,
-        setLoading,
+        getPokemons,
         handleLike,
         handleStar
       }}

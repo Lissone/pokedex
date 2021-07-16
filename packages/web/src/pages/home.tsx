@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import { parseCookies } from 'nookies'
 import { useRouter } from 'next/router'
@@ -23,16 +23,17 @@ import {
 export default function Home() {
   const router = useRouter()
 
-  const {
-    loading,
-    setLoading,
-    pokemons,
-    savePokemonsStorage,
-    page,
-    handleLike
-  } = usePokemons()
+  const { getPokemons, pokemons, savePokemonsStorage, page, handleLike } =
+    usePokemons()
 
   const [search, setSearch] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    getPokemons()
+
+    setLoading(false)
+  }, [])
 
   function handleMorePokemons() {
     if (page === null) {
