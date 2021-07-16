@@ -13,6 +13,21 @@ export const Container = styled.main`
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-size: cover;
+
+  @media (max-width: 750px) {
+    background: #000000;
+  }
+
+  @media (max-height: 600px) {
+    height: 100%;
+  }
+
+  footer {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-bottom: 2rem;
+  }
 `
 
 export const Content = styled.div`
@@ -34,22 +49,29 @@ export const Content = styled.div`
 
     img {
       width: 25rem;
+
+      transition: all 0.4s;
     }
 
     > span {
       margin-top: -1rem;
 
       font-weight: 200;
+
+      transition: all 0.4s;
     }
-  }
 
-  footer {
-    width: 30%;
+    @media (max-width: 420px) {
+      img {
+        width: 18rem;
+      }
 
-    position: absolute;
-    bottom: 0;
+      > span {
+        margin-top: -0.5rem;
 
-    margin-bottom: 1rem;
+        font-size: 0.8rem;
+      }
+    }
   }
 `
 

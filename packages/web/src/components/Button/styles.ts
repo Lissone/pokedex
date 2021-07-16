@@ -5,8 +5,8 @@ interface ContainerProps {
 }
 
 export const Container = styled.button<ContainerProps>`
+  width: 100%;
   height: 3.125rem;
-  width: 22.5rem;
 
   display: flex;
   align-items: center;

@@ -131,11 +131,11 @@ export default function Register() {
               Você já tem uma conta? <TextLink href="/">Entrar</TextLink>
             </span>
           </Form>
-
-          <footer>
-            <Developer />
-          </footer>
         </Content>
+
+        <footer>
+          <Developer />
+        </footer>
       </Container>
     </>
   )

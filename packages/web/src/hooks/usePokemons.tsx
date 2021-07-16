@@ -46,6 +46,10 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!user) {
+      return
+    }
+
     const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
 
     if (storagedListPokemons) {

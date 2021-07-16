@@ -59,6 +59,12 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+  @media (max-width: 450px) {
+    html {
+      font-size: 81.25%; //13px
+    }
+  }
+
   body {
     background: var(--gray-700);
   }
