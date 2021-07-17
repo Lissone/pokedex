@@ -65,6 +65,12 @@ export const Container = styled.div`
       margin-top: 1.5rem;
 
       flex-direction: column;
+
+      div + div {
+        padding: 1.5rem 3rem;
+
+        flex-direction: row;
+      }
     }
   }
 `
