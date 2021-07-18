@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/external/server.js",
     "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./dist",
+    "postinstall": "npm run build",
     "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules -r tsconfig-paths/register ."
   },
   "dependencies": {
