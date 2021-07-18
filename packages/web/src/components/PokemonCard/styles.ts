@@ -164,6 +164,7 @@ export const Buttons = styled.footer<ButtonsProps>`
 
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 
   @media (max-width: 520px) {
     padding: 1.5rem 3rem;
