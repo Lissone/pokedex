@@ -13,6 +13,21 @@ export const Container = styled.main`
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-size: cover;
+
+  @media (max-width: 750px) {
+    background: #000000;
+  }
+
+  @media (max-height: 600px) {
+    height: 100%;
+  }
+
+  footer {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-bottom: 2rem;
+  }
 `
 
 export const Content = styled.div`
@@ -34,26 +49,34 @@ export const Content = styled.div`
 
     img {
       width: 25rem;
+
+      transition: all 0.4s;
     }
 
     > span {
       margin-top: -1rem;
 
       font-weight: 200;
+
+      transition: all 0.4s;
     }
-  }
 
-  footer {
-    width: 30%;
+    @media (max-width: 420px) {
+      img {
+        width: 18rem;
+      }
 
-    position: absolute;
-    bottom: 0;
+      > span {
+        margin-top: -0.5rem;
 
-    margin-bottom: 1rem;
+        font-size: 0.8rem;
+      }
+    }
   }
 `
 
 export const Form = styled(Unform)`
+  width: 100%;
   margin: 2rem 0;
 
   display: flex;
@@ -61,11 +84,11 @@ export const Form = styled(Unform)`
   align-items: center;
   justify-content: center;
 
-  div + div {
+  input + input {
     margin-top: 0.5rem;
   }
 
-  div + button {
+  input + button {
     margin-top: 1rem;
   }
 
@@ -75,24 +98,34 @@ export const Form = styled(Unform)`
 `
 
 export const Divider = styled.div`
+  width: 100%;
+  margin: 2rem 0;
+
   display: flex;
   align-items: center;
 
-  margin: 1.5rem 0;
+  font-weight: 400;
+  line-height: 0;
+  color: var(--blue-200);
 
-  & div:nth-child(2) {
-    padding: 0 1.35rem;
+  &:before {
+    content: '';
+    flex: 1;
 
-    font-weight: 400;
-    line-height: 0;
-    color: var(--blue-200);
+    height: 1px;
+    margin-right: 0.875rem;
+
+    background: var(--blue-200);
   }
 
-  & div:nth-child(1),
-  & div:nth-child(3) {
-    background: var(--blue-200);
-    width: 100%;
+  &:after {
+    content: '';
+    flex: 1;
+
     height: 1px;
+    margin-left: 0.875rem;
+
+    background: var(--blue-200);
   }
 `
 

@@ -1,4 +1,11 @@
-import { createContext, ReactNode, useContext, useState } from 'react'
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  useEffect
+} from 'react'
+import { parseCookies } from 'nookies'
 
 import { useAuth, User } from './useAuth'
 import { api } from '../services/api'
@@ -18,10 +25,10 @@ export interface Pokemon {
 
 interface PokemonContextType {
   pokemons: Pokemon[]
+  getPokemons: () => void
   page: string
-  getPokemons: () => Promise<void>
-  savePokemonsStorage: (page: string, pokemon: Pokemon[]) => Promise<void>
-  handleLike: (pokemon: Pokemon) => void
+  savePokemonsStorage: (page: string, pokemon: Pokemon[]) => void
+  handleLike: (pokemon: Pokemon, user?: User) => void
   handleStar: (pokemon: Pokemon) => void
 }
 
@@ -35,32 +42,37 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
   const { user, setUser } = useAuth()
 
   const [pokemons, setPokemons] = useState<Pokemon[]>([])
-  const [page, setPage] = useState<string | null>('?offset=0&limit=20')
+  const [page, setPage] = useState<string | null>('?offset=0&limit=50')
 
-  async function getPokemons() {
-    try {
-      if (pokemons.length <= 0) {
-        const url = `/pokemon/${page}`
-        const { data } = await api.get(url)
+  useEffect(() => getPokemons(), [])
 
+  function getPokemons() {
+    const { '@Pokedex/token': token } = parseCookies()
+
+    if (!token) {
+      return
+    }
+
+    const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
+
+    if (storagedListPokemons) {
+      const storageParsed = JSON.parse(storagedListPokemons)
+
+      setPage(storageParsed.nextPage)
+      setPokemons(storageParsed.pokemons)
+    } else if (pokemons.length <= 0) {
+      api.get(`/pokemon/${page}`).then(({ data }) => {
         setPage(data.nextPage)
         setPokemons(data.pokemons)
-      }
-
-      const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
-
-      if (storagedListPokemons) {
-        const storageParsed = JSON.parse(storagedListPokemons)
-
-        setPage(storageParsed.nextPage)
-        setPokemons(storageParsed.pokemons)
-      }
-    } catch (err) {
-      throw new Error(err)
+      })
     }
   }
 
-  async function savePokemonsStorage(nextPage: string, data: Pokemon[]) {
+  function savePokemonsStorage(nextPage: string, data: Pokemon[]) {
+    if (!data) {
+      return
+    }
+
     setPage(nextPage)
     setPokemons(data)
 
@@ -70,32 +82,43 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
     )
   }
 
-  function handleLike(pokemon: Pokemon) {
+  function handleLike(pokemon: Pokemon, userData?: User) {
+    let userUpdated: User
+
     const pokemonsUpdated = pokemons.map(item =>
       item.id === pokemon.id ? { ...item, isLiked: !pokemon.isLiked } : item
     )
 
-    const pokemonUpdated = pokemonsUpdated.filter(
-      item => item.id === pokemon.id
-    )
+    if (!userData) {
+      const pokemonUpdated = pokemonsUpdated.filter(
+        item => item.id === pokemon.id
+      )
 
-    const newUser: User = {
-      uid: user.uid,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      createdAt: user.createdAt,
-      pokemonStarred: user.pokemonStarred,
-      pokemonsLiked: pokemonUpdated[0].isLiked
-        ? [...user?.pokemonsLiked, pokemonUpdated[0]]
-        : user.pokemonsLiked.filter(
-            pokemonLiked => pokemonLiked.id !== pokemonUpdated[0].id
-          )
+      userUpdated = {
+        uid: user.uid,
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        createdAt: user.createdAt,
+        pokemonStarred: user.pokemonStarred,
+        pokemonsLiked: pokemonUpdated[0].isLiked
+          ? [...user?.pokemonsLiked, pokemonUpdated[0]]
+          : user.pokemonsLiked.filter(
+              pokemonLiked => pokemonLiked.id !== pokemonUpdated[0].id
+            )
+      }
+    } else {
+      userUpdated = {
+        ...userData,
+        pokemonsLiked: user.pokemonsLiked.filter(item => item.id !== pokemon.id)
+      }
     }
 
     savePokemonsStorage(page, pokemonsUpdated)
 
-    api.put('/user/', { user: newUser }).then(({ data }) => setUser(data.user))
+    api
+      .put('/user/', { user: userUpdated })
+      .then(({ data }) => setUser(data.user))
   }
 
   function handleStar(pokemon: Pokemon) {
@@ -104,26 +127,32 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
       isStarred: !pokemon.isStarred
     }
 
-    const newUser: User = {
-      uid: user.uid,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      createdAt: user.createdAt,
+    const pokemonsUpdated = pokemons.map(item =>
+      item.id === pokemon.id ? pokemonUpdated : { ...item, isStarred: false }
+    )
+
+    const userUpdated: User = {
+      ...user,
       pokemonStarred: pokemonUpdated,
-      pokemonsLiked: user.pokemonsLiked
+      pokemonsLiked: user.pokemonsLiked.map(item =>
+        item.id === pokemon.id ? pokemonUpdated : { ...item, isStarred: false }
+      )
     }
 
-    api.put('/user/', { user: newUser }).then(({ data }) => setUser(data.user))
+    savePokemonsStorage(page, pokemonsUpdated)
+
+    api
+      .put('/user/', { user: userUpdated })
+      .then(({ data }) => setUser(data.user))
   }
 
   return (
     <PokemonsContext.Provider
       value={{
         pokemons,
-        getPokemons,
         savePokemonsStorage,
         page,
+        getPokemons,
         handleLike,
         handleStar
       }}

@@ -24,9 +24,6 @@ export const GlobalStyle = createGlobalStyle`
     --gray-700: #3E3E3E;
     --gray-750: #444444;
     --gray-800: #3E3E3E;
-    --gray-900: #171717;
-
-    --black: #000000;
 
     // pokemon types colors
     --bug: #729f3f;
@@ -62,6 +59,12 @@ export const GlobalStyle = createGlobalStyle`
     }
   }
 
+  @media (max-width: 450px) {
+    html {
+      font-size: 81.25%; //13px
+    }
+  }
+
   body {
     background: var(--gray-700);
   }
@@ -94,7 +97,32 @@ export const GlobalStyle = createGlobalStyle`
     cursor: pointer;
   }
 
+  [disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
   .Toastify__toast-container {
     width: 30%;
+  }
+
+  ::-webkit-scrollbar {
+    width: 1.3rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 0.65rem;
+    border: 6px solid transparent;
+    
+    background: var(--gray-600);
+    background-clip: content-box;
+
+    &:hover {
+      background-color: var(--blue-200);
+    }
   }
 `

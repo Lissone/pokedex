@@ -53,7 +53,6 @@ export default function Login() {
 
       formRef.current.setErrors({})
     } catch (err) {
-      reset()
       err.name = ''
       setLoading(false)
 
@@ -66,6 +65,8 @@ export default function Login() {
 
         formRef.current.setErrors(errorMessages)
       } else {
+        reset()
+
         toast.error(err.toString(), {
           hideProgressBar: true
         })
@@ -97,11 +98,7 @@ export default function Login() {
               <AiOutlineGoogle size={35} />
             </Button>
 
-            <Divider>
-              <div />
-              <div>ou</div>
-              <div />
-            </Divider>
+            <Divider>ou</Divider>
 
             <Input name="email" placeholder="E-mail" />
             <Input name="password" placeholder="Senha" type="password" />
@@ -114,11 +111,11 @@ export default function Login() {
               Não tem uma conta? <TextLink href="/register">Cadastrar</TextLink>
             </span>
           </Form>
-
-          <footer>
-            <Developer />
-          </footer>
         </Content>
+
+        <footer>
+          <Developer />
+        </footer>
       </Container>
     </>
   )
