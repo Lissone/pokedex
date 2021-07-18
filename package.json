@@ -8,12 +8,5 @@
   "private": true,
   "workspaces": [
     "packages/*"
-  ],
-  "scripts": {
-    "start": "npm run start ./packages/api"
-  },
-  "engines": {
-    "node": "12.10.0",
-    "yarn": "1.19.1"
-  }
+  ]
 }
