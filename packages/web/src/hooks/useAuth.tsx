@@ -74,12 +74,12 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
       api.defaults.headers.authorization = `Bearer ${data.token}`
 
-      const { exp } = jwt.verify(data.token, secretKey)
+      jwt.verify(data.token, secretKey, (err, decoded) => {
+        const tokenExpire = new Date(decoded.exp * 1000)
 
-      const tokenExpire = new Date(exp * 1000)
-
-      setCookie(undefined, '@Pokedex/token', data.token, {
-        expires: tokenExpire
+        setCookie(undefined, '@Pokedex/token', data.token, {
+          expires: tokenExpire
+        })
       })
 
       setUser(data.user)
@@ -104,12 +104,12 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
       api.defaults.headers.authorization = `Bearer ${data.token}`
 
-      const { exp } = jwt.verify(data.token, secretKey)
+      jwt.verify(data.token, secretKey, (err, decoded) => {
+        const tokenExpire = new Date(decoded.exp * 1000)
 
-      const tokenExpire = new Date(exp * 1000)
-
-      setCookie(undefined, '@Pokedex/token', data.token, {
-        expires: tokenExpire
+        setCookie(undefined, '@Pokedex/token', data.token, {
+          expires: tokenExpire
+        })
       })
 
       setUser(data.user)
