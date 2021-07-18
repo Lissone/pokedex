@@ -76,6 +76,7 @@ export const Content = styled.div`
 `
 
 export const Form = styled(Unform)`
+  width: 100%;
   margin: 2rem 0;
 
   display: flex;
@@ -83,11 +84,11 @@ export const Form = styled(Unform)`
   align-items: center;
   justify-content: center;
 
-  div + div + div {
+  input + input {
     margin-top: 0.5rem;
   }
 
-  div + button {
+  input + button {
     margin-top: 1rem;
   }
 

@@ -128,6 +128,10 @@ export const PokemonAvatar = styled.div`
       height: 7rem;
     }
   }
+
+  @media (max-width: 380px) {
+    margin-right: 5rem;
+  }
 `
 
 export const CardContent = styled.div`

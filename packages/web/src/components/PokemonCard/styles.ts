@@ -23,14 +23,6 @@ export const Container = styled.div`
 
   aside {
     display: flex;
-
-    div + div {
-      padding: 1rem;
-
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
   }
 
   &:hover {
@@ -65,12 +57,6 @@ export const Container = styled.div`
       margin-top: 1.5rem;
 
       flex-direction: column;
-
-      div + div {
-        padding: 1.5rem 3rem;
-
-        flex-direction: row;
-      }
     }
   }
 `
@@ -166,5 +152,26 @@ export const Divider = styled.div`
 
     width: 19rem;
     height: 5rem;
+  }
+`
+
+interface ButtonsProps {
+  starIcon: boolean
+}
+
+export const Buttons = styled.footer<ButtonsProps>`
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 520px) {
+    padding: 1.5rem 3rem;
+
+    ${({ starIcon }) =>
+      starIcon
+        ? `flex-direction: row;
+    justify-content: space-between;`
+        : 'align-items: center;'};
   }
 `
