@@ -81,7 +81,6 @@ export const Form = styled(Unform)`
 
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
 
   input + input {
