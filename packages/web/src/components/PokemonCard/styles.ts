@@ -23,14 +23,6 @@ export const Container = styled.div`
 
   aside {
     display: flex;
-
-    div + div {
-      padding: 1rem;
-
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
   }
 
   &:hover {
@@ -43,11 +35,35 @@ export const Container = styled.div`
       border: 2px solid var(--primary);
     }
   }
+
+  @media (max-width: 520px) {
+    width: 19rem;
+    height: 100%;
+    padding: 1.2rem 1.2rem 0 1.2rem;
+
+    flex-direction: column;
+
+    div {
+      width: 100%;
+
+      flex-direction: column;
+      align-items: center;
+    }
+
+    aside {
+      overflow: visible;
+
+      width: 19rem;
+      margin-top: 1.5rem;
+
+      flex-direction: column;
+    }
+  }
 `
 
 export const PokemonAvatar = styled.div`
   height: 7.5rem;
-  width: 7.5rem;
+  width: 7.5rem !important;
 
   display: flex;
   align-items: center;
@@ -66,6 +82,11 @@ export const PokemonAvatar = styled.div`
   img {
     width: 4.5rem;
     height: 4.5rem;
+
+    @media (max-width: 520px) {
+      width: 3.7rem;
+      height: 3.7rem;
+    }
   }
 `
 
@@ -76,6 +97,11 @@ export const Fields = styled.div`
   flex-direction: column;
   justify-content: center;
   gap: 1rem;
+
+  @media (max-width: 520px) {
+    margin-top: 1rem;
+    margin-left: 0;
+  }
 `
 
 export const Field = styled.div`
@@ -96,6 +122,10 @@ export const Field = styled.div`
   p {
     color: var(--blue-200);
   }
+
+  @media (max-width: 520px) {
+    width: 100%;
+  }
 `
 
 export const Divider = styled.div`
@@ -115,5 +145,33 @@ export const Divider = styled.div`
     font-size: 1.875rem;
 
     color: var(--gray-800);
+  }
+
+  @media (max-width: 520px) {
+    overflow: visible;
+
+    width: 19rem;
+    height: 5rem;
+  }
+`
+
+interface ButtonsProps {
+  starIcon: boolean
+}
+
+export const Buttons = styled.footer<ButtonsProps>`
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 520px) {
+    padding: 1.5rem 3rem;
+
+    ${({ starIcon }) =>
+      starIcon
+        ? `flex-direction: row;
+    justify-content: space-between;`
+        : 'align-items: center;'};
   }
 `

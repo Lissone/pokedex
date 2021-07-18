@@ -5,8 +5,8 @@ interface InputContainerProps {
 }
 
 export const InputContainer = styled.input<InputContainerProps>`
+  width: 100%;
   height: 3.125rem;
-  width: 22.5rem;
 
   padding: 0 1rem;
 

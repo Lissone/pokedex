@@ -111,11 +111,11 @@ export default function Login() {
               Não tem uma conta? <TextLink href="/register">Cadastrar</TextLink>
             </span>
           </Form>
-
-          <footer>
-            <Developer />
-          </footer>
         </Content>
+
+        <footer>
+          <Developer />
+        </footer>
       </Container>
     </>
   )

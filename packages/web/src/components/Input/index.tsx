@@ -21,7 +21,7 @@ export function Input({ color = 'black', name, ...rest }: InputProps) {
   }, [fieldName, registerField])
 
   return (
-    <div>
+    <>
       <InputContainer
         color={color}
         ref={inputRef}
@@ -30,6 +30,6 @@ export function Input({ color = 'black', name, ...rest }: InputProps) {
       />
 
       {error && <Error>{error}</Error>}
-    </div>
+    </>
   )
 }

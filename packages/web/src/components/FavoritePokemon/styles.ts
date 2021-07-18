@@ -53,4 +53,8 @@ export const Container = styled.button`
       opacity: 1;
     }
   }
+
+  @media (max-width: 850px) {
+    display: none;
+  }
 `

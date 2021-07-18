@@ -6,6 +6,7 @@ import { parseCookies } from 'nookies'
 import { getApiClient } from '../../services/axios'
 import { usePokemons } from '../../hooks/usePokemons'
 
+import { MobileHeader } from '../../components/MobileHeader'
 import { LikeButton } from '../../components/LikeButton'
 import { Pokemon } from '../../components/PokemonCard'
 import { TypeBox } from '../../components/TypeBox'
@@ -58,6 +59,8 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
         <title>{pokemonNameFormatted} - Pokedex</title>
       </Head>
 
+      <MobileHeader />
+
       <Container>
         <Content>
           <header>
@@ -97,13 +100,13 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
               </ColumnLeft>
 
               <ColumnRight>
-                <Fields>
+                <Fields className="secondField">
                   <Field align="start">
                     <span>Habilidade</span>
                     <p>{abilitiesFormatted}</p>
                   </Field>
 
-                  <Divider />
+                  <Divider className="secondDivider" />
 
                   <Field align="start">
                     <span>Tipo</span>

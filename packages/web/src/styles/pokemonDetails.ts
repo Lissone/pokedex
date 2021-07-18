@@ -1,8 +1,6 @@
 import styled from 'styled-components'
 
 export const Container = styled.main`
-  padding-bottom: 1rem;
-
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,6 +10,7 @@ export const Content = styled.div`
   width: 70rem;
 
   margin-top: 4rem;
+  margin-bottom: 1rem;
 
   border-radius: 1rem;
   -webkit-box-shadow: 0px 0px 40px 5px rgba(0, 0, 0, 0.25);
@@ -36,6 +35,16 @@ export const Content = styled.div`
         height: 4rem;
       }
     }
+  }
+
+  @media (max-width: 1140px) {
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+
+    border-radius: 0;
+    -webkit-box-shadow: 0px 0px 0px 0px;
+    box-shadow: 0px 0px 0px 0px;
   }
 `
 
@@ -67,6 +76,25 @@ export const Band = styled.div`
 
     color: var(--blue-900);
   }
+
+  @media (max-width: 750px) {
+    height: 100%;
+
+    flex-direction: column;
+
+    > div {
+      margin-top: -6rem;
+    }
+
+    h2 {
+      margin-top: 1rem;
+    }
+
+    h1 {
+      margin-right: 0;
+      margin-bottom: 1rem;
+    }
+  }
 `
 export const PokemonAvatar = styled.div`
   height: 17rem;
@@ -90,6 +118,20 @@ export const PokemonAvatar = styled.div`
     width: 10rem;
     height: 10rem;
   }
+
+  @media (max-width: 500px) {
+    height: 12rem;
+    width: 12rem;
+
+    img {
+      width: 7rem;
+      height: 7rem;
+    }
+  }
+
+  @media (max-width: 380px) {
+    margin-right: 5rem;
+  }
 `
 
 export const CardContent = styled.div`
@@ -99,6 +141,10 @@ export const CardContent = styled.div`
 `
 export const Row = styled.div`
   display: flex;
+
+  @media (max-width: 750px) {
+    flex-direction: column;
+  }
 `
 
 export const ColumnLeft = styled.div`
@@ -108,6 +154,11 @@ export const ColumnLeft = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 750px) {
+    width: 100%;
+    margin-top: 2rem;
+  }
 `
 
 export const ColumnRight = styled.div`
@@ -116,6 +167,22 @@ export const ColumnRight = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 750px) {
+    padding: 0;
+    margin-top: 2rem;
+
+    .secondField {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .secondDivider {
+      width: 10rem;
+      height: 2px;
+      margin: 0.5rem 0;
+    }
+  }
 `
 
 export const Fields = styled.div`
@@ -152,6 +219,15 @@ export const Field = styled.div<FieldProps>`
   p {
     color: var(--blue-200);
   }
+
+  @media (max-width: 750px) {
+    text-align: center;
+
+    > div {
+      display: flex;
+      flex-direction: row;
+    }
+  }
 `
 
 export const Divider = styled.div`
@@ -174,6 +250,28 @@ export const EvolutionRow = styled.div`
 
   > img:nth-child(1) {
     display: none;
+  }
+
+  @media (max-width: 1140px) {
+    gap: 0;
+  }
+
+  @media (max-width: 970px) {
+    > img {
+      height: 9rem;
+    }
+  }
+
+  @media (max-width: 680px) {
+    flex-direction: column;
+
+    > img {
+      width: 12rem;
+
+      -ms-transform: rotate(90deg);
+      -webkit-transform: rotate(90deg);
+      transform: rotate(90deg);
+    }
   }
 `
 
@@ -218,5 +316,51 @@ export const PokemonAvatarEvolution = styled.div`
     transform: scale(1.1);
 
     filter: brightness(0.9);
+  }
+
+  @media (max-width: 970px) {
+    height: 10rem;
+    width: 10rem;
+
+    img {
+      height: 5rem;
+      width: 5rem;
+    }
+
+    > div {
+      margin-top: 0;
+
+      span {
+        font-size: 0.8rem;
+      }
+
+      p {
+        margin-top: -0.8rem;
+
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  @media (max-width: 680px) {
+    height: 15rem;
+    width: 15rem;
+
+    img {
+      height: 7.5rem;
+      width: 7.5rem;
+    }
+
+    > div {
+      margin-top: 0.7rem;
+
+      span {
+        font-size: 1.3rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
   }
 `

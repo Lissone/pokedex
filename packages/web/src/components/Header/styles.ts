@@ -47,6 +47,17 @@ export const Container = styled.header`
       }
     }
   }
+
+  @media (max-width: 850px) {
+    height: 100%;
+    padding-bottom: 2rem;
+
+    justify-content: center;
+
+    > div {
+      display: none;
+    }
+  }
 `
 export const Content = styled.main`
   display: flex;
@@ -69,5 +80,11 @@ export const Content = styled.main`
     font-weight: 200;
 
     color: var(--blue-200);
+
+    transition: all 0.4s;
+
+    @media (max-width: 520px) {
+      font-size: 0.8rem;
+    }
   }
 `

@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import { useAuth } from '../hooks/useAuth'
 import { Pokemon, usePokemons } from '../hooks/usePokemons'
 
+import { MobileHeader } from '../components/MobileHeader'
 import { Header } from '../components/Header'
 import { PokemonCard } from '../components/PokemonCard'
 
@@ -45,6 +46,8 @@ export default function Account() {
         <title>Seu perfil - Pokedex</title>
       </Head>
 
+      <MobileHeader />
+
       <Container>
         <Content>
           <Header
@@ -57,48 +60,51 @@ export default function Account() {
               <header>
                 <h2>Pokémons curtidos</h2>
               </header>
+              <div>
+                <input
+                  placeholder="Pesquise pelo nome do pokémon"
+                  type="text"
+                  onChange={event => setSearch(event.target.value)}
+                />
 
-              <input
-                placeholder="Pesquise pelo nome do pokémon"
-                type="text"
-                onChange={event => setSearch(event.target.value)}
-              />
+                <ListPokemonCards>
+                  {user?.pokemonsLiked
+                    .filter(pokemon => {
+                      if (search === '') {
+                        return pokemon
+                      }
 
-              <ListPokemonCards>
-                {user?.pokemonsLiked
-                  .filter(pokemon => {
-                    if (search === '') {
-                      return pokemon
-                    }
+                      if (
+                        pokemon.name
+                          .toLowerCase()
+                          .includes(search.toLowerCase())
+                      ) {
+                        return pokemon
+                      }
 
-                    if (
-                      pokemon.name.toLowerCase().includes(search.toLowerCase())
-                    ) {
-                      return pokemon
-                    }
-
-                    return null
-                  })
-                  .sort((a, b) => {
-                    if (a.id > b.id) {
-                      return 1
-                    }
-                    if (a.id < b.id) {
-                      return -1
-                    }
-                    return 0
-                  })
-                  .map(pokemon => (
-                    <PokemonCard
-                      key={pokemon.id}
-                      pokemon={pokemon}
-                      handleLike={() => handleLike(pokemon, user)}
-                      handleStar={() => handleClickStar(pokemon)}
-                      onClick={() => handleClickPokemonCard(pokemon.id)}
-                      starIcon
-                    />
-                  ))}
-              </ListPokemonCards>
+                      return null
+                    })
+                    .sort((a, b) => {
+                      if (a.id > b.id) {
+                        return 1
+                      }
+                      if (a.id < b.id) {
+                        return -1
+                      }
+                      return 0
+                    })
+                    .map(pokemon => (
+                      <PokemonCard
+                        key={pokemon.id}
+                        pokemon={pokemon}
+                        handleLike={() => handleLike(pokemon, user)}
+                        handleStar={() => handleClickStar(pokemon)}
+                        onClick={() => handleClickPokemonCard(pokemon.id)}
+                        starIcon
+                      />
+                    ))}
+                </ListPokemonCards>
+              </div>
             </LikedPokemons>
           )}
         </Content>
