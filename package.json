@@ -8,5 +8,9 @@
   "private": true,
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "engines": {
+    "node": "12.10.0",
+    "yarn": "1.19.1"
+  }
 }
