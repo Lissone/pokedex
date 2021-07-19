@@ -4,6 +4,8 @@ export const Container = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  background: var(--gray-700);
 `
 
 export const Content = styled.div`
@@ -24,7 +26,8 @@ export const Content = styled.div`
     padding-right: 3.125rem;
 
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
 
     .like-button {
       width: 4rem;
@@ -34,6 +37,26 @@ export const Content = styled.div`
         width: 4rem;
         height: 4rem;
       }
+    }
+
+    svg {
+      width: 5rem;
+      height: 5rem;
+
+      cursor: pointer;
+
+      color: var(--gray-600);
+
+      transition: filter 0.4s;
+
+      &:hover {
+        filter: brightness(0.8);
+      }
+    }
+
+    @media (max-width: 400px) {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
     }
   }
 
@@ -77,7 +100,7 @@ export const Band = styled.div`
     color: var(--blue-900);
   }
 
-  @media (max-width: 750px) {
+  @media (max-width: 820px) {
     height: 100%;
 
     flex-direction: column;
@@ -99,6 +122,7 @@ export const Band = styled.div`
 export const PokemonAvatar = styled.div`
   height: 17rem;
   width: 17rem;
+  margin-left: 2rem;
 
   display: flex;
   align-items: center;
@@ -119,6 +143,10 @@ export const PokemonAvatar = styled.div`
     height: 10rem;
   }
 
+  @media (max-width: 820px) {
+    margin-left: 0;
+  }
+
   @media (max-width: 500px) {
     height: 12rem;
     width: 12rem;
@@ -128,10 +156,6 @@ export const PokemonAvatar = styled.div`
       height: 7rem;
     }
   }
-
-  @media (max-width: 380px) {
-    margin-right: 5rem;
-  }
 `
 
 export const CardContent = styled.div`
@@ -140,9 +164,17 @@ export const CardContent = styled.div`
   padding-right: 3.125rem;
 `
 export const Row = styled.div`
+  &:first-child {
+    margin-left: 2.5rem;
+  }
+
   display: flex;
 
-  @media (max-width: 750px) {
+  @media (max-width: 820px) {
+    &:first-child {
+      margin-left: 0;
+    }
+
     flex-direction: column;
   }
 `
@@ -155,7 +187,7 @@ export const ColumnLeft = styled.div`
   flex-direction: column;
   align-items: center;
 
-  @media (max-width: 750px) {
+  @media (max-width: 820px) {
     width: 100%;
     margin-top: 2rem;
   }
@@ -168,7 +200,7 @@ export const ColumnRight = styled.div`
   flex-direction: column;
   align-items: center;
 
-  @media (max-width: 750px) {
+  @media (max-width: 820px) {
     padding: 0;
     margin-top: 2rem;
 
@@ -220,7 +252,7 @@ export const Field = styled.div<FieldProps>`
     color: var(--blue-200);
   }
 
-  @media (max-width: 750px) {
+  @media (max-width: 820px) {
     text-align: center;
 
     > div {

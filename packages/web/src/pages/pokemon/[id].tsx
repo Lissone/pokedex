@@ -1,7 +1,9 @@
 import Head from 'next/head'
 import { GetServerSideProps } from 'next'
+import Link from 'next/link'
 import { useState } from 'react'
 import { parseCookies } from 'nookies'
+import { IoChevronBack } from 'react-icons/io5'
 
 import { getApiClient } from '../../services/axios'
 import { usePokemons } from '../../hooks/usePokemons'
@@ -64,6 +66,10 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
       <Container>
         <Content>
           <header>
+            <Link href="/home">
+              <IoChevronBack />
+            </Link>
+
             <LikeButton
               className="like-button"
               pokemon={pokemon}

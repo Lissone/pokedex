@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { BiExit } from 'react-icons/bi'
+import { IoChevronBack } from 'react-icons/io5'
 
 import { useAuth } from '../../hooks/useAuth'
 
@@ -9,11 +11,16 @@ import { FavoritePokemon } from '../FavoritePokemon'
 import { Container, Content } from './styles'
 
 interface HeaderProps {
+  favoritePokemon?: boolean
   heading?: string
   description?: string
 }
 
-export function Header({ heading, description }: HeaderProps) {
+export function Header({
+  favoritePokemon = true,
+  heading,
+  description
+}: HeaderProps) {
   const router = useRouter()
 
   const { user, signOut } = useAuth()
@@ -34,10 +41,18 @@ export function Header({ heading, description }: HeaderProps) {
 
   return (
     <Container>
-      <FavoritePokemon
-        onClick={handleClickPokemonAvatar}
-        photo={user?.pokemonStarred ? user.pokemonStarred.photo : undefined}
-      />
+      {favoritePokemon ? (
+        <FavoritePokemon
+          onClick={handleClickPokemonAvatar}
+          photo={user?.pokemonStarred ? user.pokemonStarred.photo : undefined}
+        />
+      ) : (
+        <div>
+          <Link href="/home">
+            <IoChevronBack />
+          </Link>
+        </div>
+      )}
 
       <Content>
         <h1>{heading || 'Bem-vindo'}</h1>

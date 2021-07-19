@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Form as Unform } from '@unform/web'
 
 export const Container = styled.main`
-  height: 100vh;
+  min-height: 100vh;
 
   display: flex;
   flex-direction: column;
@@ -18,7 +18,7 @@ export const Container = styled.main`
     background: #000000;
   }
 
-  @media (max-height: 600px) {
+  @media (max-height: 500px) {
     height: 100%;
   }
 
@@ -81,13 +81,14 @@ export const Form = styled(Unform)`
 
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
 
-  input + input {
+  div + div {
     margin-top: 0.5rem;
   }
 
-  input + button {
+  div + button {
     margin-top: 1rem;
   }
 

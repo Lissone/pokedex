@@ -51,6 +51,7 @@ export default function Account() {
       <Container>
         <Content>
           <Header
+            favoritePokemon={false}
             heading="Perfil"
             description="Customize seu perfil e escolha seu pokémon favorito"
           />

@@ -14,6 +14,21 @@ export const Container = styled.header`
     display: flex;
     flex-direction: column;
 
+    > svg {
+      width: 5rem;
+      height: 5rem;
+
+      cursor: pointer;
+
+      color: var(--gray-600);
+
+      transition: filter 0.4s;
+
+      &:hover {
+        filter: brightness(0.8);
+      }
+    }
+
     button {
       padding: 0.5rem 1.5rem;
 

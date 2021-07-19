@@ -1,5 +1,13 @@
 import styled from 'styled-components'
 
+export const Container = styled.div`
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+`
+
 interface InputContainerProps {
   color: string
 }
@@ -22,8 +30,7 @@ export const InputContainer = styled.input<InputContainerProps>`
 `
 
 export const Error = styled.div`
-  margin-top: 0.4rem;
-  margin-bottom: 0.2rem;
+  margin: 0.7rem 0;
 
   font-weight: 200;
 `
