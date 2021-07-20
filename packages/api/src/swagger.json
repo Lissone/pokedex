@@ -11,7 +11,7 @@
 			"email": "leonardo.lissonez@gmail.com"
 		}
 	},
-	"host": "https://pokedex-lissone-api.herokuapp.com/api/",
+	"host": "pokedex-lissone-api.herokuapp.com/api/",
 	"basePath": "v1",
 	"tags": [
     {
