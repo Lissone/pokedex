@@ -79,7 +79,10 @@
                 },
                 "token": {
                   "type": "string"
-                }
+                },
+								"tokenExpires": {
+									"type": "number"
+								}
               }
 						}
 					},
@@ -140,7 +143,10 @@
                 },
                 "token": {
                   "type": "string"
-                }
+                },
+								"tokenExpires": {
+									"type": "number"
+								}
               }
 						}
 					},

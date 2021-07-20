@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { BiExit } from 'react-icons/bi'
 import { FiMenu } from 'react-icons/fi'
@@ -32,11 +31,13 @@ export function MobileHeader() {
     router.push('/account')
   }
 
+  function handleClickReturn() {
+    router.push('/home')
+  }
+
   return (
     <Container>
-      <Link href="/home">
-        <img src="/images/logo.png" alt="Pokedex" />
-      </Link>
+      <img src="/images/logo.png" alt="Pokedex" onClick={handleClickReturn} />
 
       <Hamburguer onClick={() => setHamburguerIsOpen(!hamburguerIsOpen)}>
         <FiMenu size={40} />

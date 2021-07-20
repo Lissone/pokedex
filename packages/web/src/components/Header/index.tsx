@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router'
-import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { BiExit } from 'react-icons/bi'
 import { IoChevronBack } from 'react-icons/io5'
@@ -39,6 +38,10 @@ export function Header({
     router.push('/account')
   }
 
+  function handleClickReturn() {
+    router.back()
+  }
+
   return (
     <Container>
       {favoritePokemon ? (
@@ -48,9 +51,7 @@ export function Header({
         />
       ) : (
         <div>
-          <Link href="/home">
-            <IoChevronBack />
-          </Link>
+          <IoChevronBack onClick={handleClickReturn} />
         </div>
       )}
 

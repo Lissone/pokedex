@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { GetServerSideProps } from 'next'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { parseCookies } from 'nookies'
 import { IoChevronBack } from 'react-icons/io5'
@@ -34,6 +34,8 @@ interface PokemonDetailsProps {
 }
 
 export default function PokemonDetails({ data }: PokemonDetailsProps) {
+  const router = useRouter()
+
   const { handleLike } = usePokemons()
 
   const [pokemon, setPokemon] = useState(data)
@@ -55,6 +57,10 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
     handleLike(item)
   }
 
+  function handleClickReturn() {
+    router.back()
+  }
+
   return (
     <>
       <Head>
@@ -66,9 +72,7 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
       <Container>
         <Content>
           <header>
-            <Link href="/home">
-              <IoChevronBack />
-            </Link>
+            <IoChevronBack onClick={handleClickReturn} />
 
             <LikeButton
               className="like-button"

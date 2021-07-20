@@ -30,15 +30,17 @@ class UserController {
         return
       }
 
+      const tokenExpires = 60 * 60 * 1 // 1 hour
+
       const token = jwt.sign({
         uid: user.uid,
         name: user.name,
         email: user.email
       }, secretKey!, {
-        expiresIn: 60 * 60 * 1 // 1 hour
+        expiresIn: tokenExpires
       })
 
-      res.status(200).json({ user, token })
+      res.status(200).json({ user, token, tokenExpires })
     } catch (err) {
       res.status(500).send({ message: err.message })
     }
@@ -67,15 +69,17 @@ class UserController {
         pokemonsLiked: []
       })
 
+      const tokenExpires = 60 * 60 * 1 // 1 hour
+
       const token = jwt.sign({
         uid: response.uid,
         name: response.name,
         email: response.email
       }, secretKey!, {
-        expiresIn: 60 * 60 * 1 // 1 hour
+        expiresIn: tokenExpires
       })
 
-      res.status(201).json({ user: response, token })
+      res.status(201).json({ user: response, token, tokenExpires })
     } catch (err) {
       res.status(500).send({ message: err.message })
     }

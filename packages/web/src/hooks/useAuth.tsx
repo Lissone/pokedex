@@ -6,7 +6,6 @@ import React, {
   useEffect
 } from 'react'
 import { setCookie, parseCookies, destroyCookie } from 'nookies'
-import jwt from 'jsonwebtoken'
 import Router from 'next/router'
 
 import { api } from '../services/api'
@@ -48,8 +47,6 @@ interface AuthContextProviderProps {
   children: ReactNode
 }
 
-const secretKey = process.env.NEXT_PUBLIC_SECRET_KEY
-
 export const AuthContext = createContext({} as AuthContextType)
 
 export function AuthProvider({ children }: AuthContextProviderProps) {
@@ -74,12 +71,8 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
       api.defaults.headers.authorization = `Bearer ${data.token}`
 
-      jwt.verify(data.token, secretKey, (err, decoded) => {
-        const tokenExpire = new Date(decoded.exp * 1000)
-
-        setCookie(undefined, '@Pokedex/token', data.token, {
-          expires: tokenExpire
-        })
+      setCookie(undefined, '@Pokedex/token', data.token, {
+        maxAge: data.tokenExpires
       })
 
       setUser(data.user)
@@ -104,12 +97,8 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
       api.defaults.headers.authorization = `Bearer ${data.token}`
 
-      jwt.verify(data.token, secretKey, (err, decoded) => {
-        const tokenExpire = new Date(decoded.exp * 1000)
-
-        setCookie(undefined, '@Pokedex/token', data.token, {
-          expires: tokenExpire
-        })
+      setCookie(undefined, '@Pokedex/token', data.token, {
+        maxAge: data.tokenExpire
       })
 
       setUser(data.user)
