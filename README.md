@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img alt="Pokedex" src="./packages/web/public/images/logo.png" width="350px">
+  <img alt="Pokedex logo" src="./packages/web/public/images/logo.png" width="350px">
 </h1>
 
 <p align="center">
@@ -39,45 +39,50 @@ For the development of this project, a flowchart was created as application docu
 
 ## Requirements
 
-* [Yarn](https://yarnpkg.com/)
-* [Nodejs](https://nodejs.org/en/)
+- [Npm](https://www.npmjs.com/)
+- [Yarn](https://yarnpkg.com/)
+- [Nodejs](https://nodejs.org/en/)
 
 ## Technologies
 
 ### Backend (Api)
-* Nodejs
-* Typescript
-* Express
-* Firestore
-* Jwt authentication
-* Swagger
+
+- Nodejs
+- Typescript
+- Express
+- Firestore
+- Jwt authentication
+- Swagger
 
 ### Front End
-* NextJs
-* Typescript
-* StyledComponents
-* Firebase (Social authentication)
-* Nookies
-* ESLint (Airbnb config + pessoal rules)
-* Prettier
+
+- NextJs
+- Typescript
+- StyledComponents
+- Firebase (Social authentication)
+- Nookies
+- ESLint (Airbnb config + pessoal rules)
+- Prettier
 
 ## Layout
 
-You can view the project layout via this <a href="https://www.figma.com/file/tjSrlP5Y0x6rK4rrA5Lqx6/Pokedex?node-id=15%3A271" target="_blank">link</a>. You must have a <a href="https://figma.com" target="_blank">Figma</a> account to access it.
+You can view the project layout via this <a href="https://www.figma.com/file/tjSrlP5Y0x6rK4rrA5Lqx6/Pokedex?node-id=15%3A271" target="_blank">link</a>.
 
 ## Usage
 
 You can clone it on your pc using the command:
+
 ```bash
 git clone https://github.com/Lissone/pokedex.git
 cd pokedex
 ```
 
 Install dependencies using:
+
 ```bash
 yarn
 #or
-npm run
+npm install
 ```
 
 Need to add environment variables in both projects:
@@ -120,6 +125,7 @@ SECRET_KEY=
 ```
 
 Run api:
+
 ```bash
 cd .\packages\api\
 yarn dev
@@ -128,6 +134,7 @@ npm run dev
 ```
 
 Run web:
+
 ```bash
 cd .\packages\web\
 yarn dev
@@ -137,7 +144,7 @@ npm run dev
 
 ## Demonstration
 
-<img src="./.github/demo-pokedex.gif" alt="Demo Letmeask" width="100%" height="100%"/>
+<img src="./.github/demo-pokedex.gif" alt="Demo Pokedex" width="100%" height="100%"/>
 
 ## License
 
