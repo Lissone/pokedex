@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+// -------------------------------------------------------------------
+
 export const Container = styled.div`
   width: 30.5rem;
   height: 9.8125rem;
@@ -13,7 +15,7 @@ export const Container = styled.div`
 
   background: var(--gray-700);
 
-  transition: all 0.6s;
+  transition: all 0.3s;
 
   div {
     cursor: pointer;
@@ -29,10 +31,10 @@ export const Container = styled.div`
     -webkit-transform: scale(1.05);
     transform: scale(1.05);
 
-    border: 2px solid var(--primary);
+    border: 2px solid var(--purple-500);
 
     .avatar {
-      border: 2px solid var(--primary);
+      border: 2px solid var(--purple-500);
     }
   }
 
@@ -78,16 +80,6 @@ export const PokemonAvatar = styled.div`
   background: var(--blue-900);
 
   transition: all 0.6s;
-
-  img {
-    width: 4.5rem;
-    height: 4.5rem;
-
-    @media (max-width: 520px) {
-      width: 3.7rem;
-      height: 3.7rem;
-    }
-  }
 `
 
 export const Fields = styled.div`
@@ -156,7 +148,7 @@ export const Divider = styled.div`
 `
 
 interface ButtonsProps {
-  starIcon: boolean
+  readonly starIcon: boolean
 }
 
 export const Buttons = styled.footer<ButtonsProps>`
@@ -174,5 +166,33 @@ export const Buttons = styled.footer<ButtonsProps>`
         ? `flex-direction: row;
     justify-content: space-between;`
         : 'align-items: center;'};
+  }
+`
+
+export const LikeButton = styled.button`
+  width: 2rem;
+  height: 2rem;
+
+  background: transparent;
+
+  transition: transform 0.4s ease;
+
+  &:hover {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
+  }
+`
+
+export const StarButton = styled.button`
+  width: 2rem;
+  height: 2rem;
+
+  background: transparent;
+
+  transition: transform 0.4s ease;
+
+  &:hover {
+    -webkit-transform: scale(1.1);
+    transform: scale(1.1);
   }
 `

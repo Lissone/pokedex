@@ -1,49 +1,37 @@
 import Head from 'next/head'
-import { GetServerSideProps } from 'next'
-import { useEffect, useState } from 'react'
-import { parseCookies } from 'nookies'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { IoChevronBack } from 'react-icons/io5'
 
-import { useAuth } from '../hooks/useAuth'
-import { Pokemon, usePokemons } from '../hooks/usePokemons'
+import { useAuth } from '@hooks/useAuth'
+import { usePokemons } from '@hooks/usePokemons'
 
-import { MobileHeader } from '../components/MobileHeader'
-import { Header } from '../components/Header'
-import { PokemonCard } from '../components/PokemonCard'
+import { Header } from '@components/Header'
+import { InputFilter } from '@components/InputFilter'
+import { MobileHeader } from '@components/MobileHeader'
+import { PokemonCard } from '@components/PokemonCard'
 
-import {
-  Container,
-  Content,
-  LikedPokemons,
-  ListPokemonCards
-} from '../styles/account'
+import { withSSRAuth } from '@utils/withSSRAuth'
+
+import { Container, Content, LikedPokemons, LikedPokemonsHeader, ListPokemonCards } from '@styles/account'
+
+// -------------------------------------------------------------------
 
 export default function Account() {
-  const router = useRouter()
-
   const { user } = useAuth()
   const { handleLike, handleStar } = usePokemons()
+  const router = useRouter()
 
   const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    if (user?.pokemonsLiked.length <= 0) {
-      router.push('/')
-    }
-  }, [user])
+  // ------------------------------
 
-  function handleClickStar(pokemon: Pokemon) {
-    handleStar(pokemon)
-  }
-
-  function handleClickPokemonCard(pokemonId: string) {
-    router.push(`/pokemon/${pokemonId}`)
-  }
+  if (!user) return null
 
   return (
     <>
       <Head>
-        <title>Seu perfil - Pokedex</title>
+        <title>Perfil da Pokedex</title>
       </Head>
 
       <MobileHeader />
@@ -51,82 +39,64 @@ export default function Account() {
       <Container>
         <Content>
           <Header
-            favoritePokemon={false}
             heading="Perfil"
-            description="Customize seu perfil e escolha seu pokémon favorito"
+            description="Customize seu perfil, escolha seu pokémon favorito e compartilhe a pokedex com seus amigos!"
+            pokemonStarred={user.pokemonStarred}
           />
 
-          {user?.pokemonsLiked.length > 0 && (
+          {user.pokemonsLiked.length > 0 ? (
             <LikedPokemons>
-              <header>
-                <h2>Pokémons curtidos</h2>
-              </header>
+              <LikedPokemonsHeader>
+                <IoChevronBack size={42} onClick={() => router.back()} />
+
+                <div className="heading">
+                  <h2>Pokémons curtidos</h2>
+                  <span>
+                    Lista de todos os pokemons que você curte. Volte para a pokedex se quiser capturar mais pokemons
+                    para sua lista!
+                  </span>
+                </div>
+
+                <div className="invisibleBox" />
+              </LikedPokemonsHeader>
+
               <div>
-                <input
-                  placeholder="Pesquise pelo nome do pokémon"
-                  type="text"
-                  onChange={event => setSearch(event.target.value)}
-                />
+                <InputFilter setSearch={setSearch} />
 
                 <ListPokemonCards>
-                  {user?.pokemonsLiked
-                    .filter(pokemon => {
-                      if (search === '') {
-                        return pokemon
-                      }
-
-                      if (
-                        pokemon.name
-                          .toLowerCase()
-                          .includes(search.toLowerCase())
-                      ) {
-                        return pokemon
-                      }
-
+                  {user.pokemonsLiked
+                    .filter((pokemon) => {
+                      if (search === '') return pokemon
+                      if (pokemon.name.toLowerCase().includes(search.toLowerCase())) return pokemon
                       return null
                     })
                     .sort((a, b) => {
-                      if (a.id > b.id) {
-                        return 1
-                      }
-                      if (a.id < b.id) {
-                        return -1
-                      }
+                      if (a.id > b.id) return 1
+                      if (a.id < b.id) return -1
                       return 0
                     })
-                    .map(pokemon => (
+                    .map((pokemon) => (
                       <PokemonCard
                         key={pokemon.id}
                         pokemon={pokemon}
                         handleLike={() => handleLike(pokemon, user)}
-                        handleStar={() => handleClickStar(pokemon)}
-                        onClick={() => handleClickPokemonCard(pokemon.id)}
+                        handleStar={() => handleStar(pokemon)}
+                        onClick={() => router.push(`/pokemon/${pokemon.id}`)}
                         starIcon
                       />
                     ))}
                 </ListPokemonCards>
               </div>
             </LikedPokemons>
-          )}
+          ) : null}
         </Content>
       </Container>
     </>
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ctx => {
-  const { '@Pokedex/token': token } = parseCookies(ctx)
+// -------------------------------------------------------------------
 
-  if (!token) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false
-      }
-    }
-  }
-
-  return {
-    props: {}
-  }
-}
+export const getServerSideProps = withSSRAuth(async () => ({
+  props: {}
+}))

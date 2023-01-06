@@ -2,6 +2,8 @@ import { createGlobalStyle } from 'styled-components'
 
 import 'react-toastify/dist/ReactToastify.css'
 
+// -------------------------------------------------------------------
+
 export const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
@@ -11,15 +13,18 @@ export const GlobalStyle = createGlobalStyle`
 
   :root {
     // pallet
-    --white: #FAFAFA;
+    --white: #DDDDDD;
 
-    --red-200: #EA4335;
+    --red-200: #886060;
+    --red-400: #824444;
+    --red-500: #DC4A31;
     
     --blue-200: #A1B2CD;
     --blue-900: #282D34;
 
-    --primary: #654BB1;
+    --purple-500: #654BB1;
 
+    --gray-500: #A3A3A3;
     --gray-600: #6D6D6D;
     --gray-700: #3E3E3E;
     --gray-750: #444444;

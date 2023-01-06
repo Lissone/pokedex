@@ -1,7 +1,9 @@
 import styled from 'styled-components'
 
+// -------------------------------------------------------------------
+
 interface ContainerProps {
-  color: string
+  readonly color: string
 }
 
 export const Container = styled.button<ContainerProps>`

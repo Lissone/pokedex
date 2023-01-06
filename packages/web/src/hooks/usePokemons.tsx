@@ -1,40 +1,38 @@
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useState,
-  useEffect
-} from 'react'
-import { parseCookies } from 'nookies'
+/* eslint-disable import/no-cycle */
+/* eslint-disable no-console */
+import { createContext, ReactNode, useContext, useState, useCallback, useMemo } from 'react'
+
+import { api } from '@services/api'
 
 import { useAuth, User } from './useAuth'
-import { api } from '../services/api'
+
+// -------------------------------------------------------------------
 
 export interface Pokemon {
-  id: string
-  name: string
-  photo: string
-  height: string
-  weight: string
-  isStarred: boolean
-  isLiked: boolean
-  types: string[]
-  abilities: string[]
-  evolutions?: Pokemon[] | null
+  readonly id: string
+  readonly name: string
+  readonly photo: string
+  readonly height: string
+  readonly weight: string
+  readonly isStarred: boolean
+  readonly isLiked: boolean
+  readonly types: string[]
+  readonly abilities: string[]
+  readonly evolutions?: Pokemon[] | null
 }
 
 interface PokemonContextType {
-  pokemons: Pokemon[]
-  getPokemons: () => void
-  page: string
-  savePokemonsStorage: (page: string, pokemon: Pokemon[]) => void
-  handleLike: (pokemon: Pokemon, user?: User) => void
-  handleStar: (pokemon: Pokemon) => void
+  readonly pokemons: Pokemon[]
+  readonly getPokemons: (page?: string) => Promise<string>
+  readonly handleLike: (pokemon: Pokemon, user?: User) => void
+  readonly handleStar: (pokemon: Pokemon) => void
 }
 
 interface PokemonContextProviderProps {
-  children: ReactNode
+  readonly children: ReactNode
 }
+
+// -------------------------------------------------------------------
 
 export const PokemonsContext = createContext({} as PokemonContextType)
 
@@ -42,128 +40,128 @@ export function PokemonsProvider({ children }: PokemonContextProviderProps) {
   const { user, setUser } = useAuth()
 
   const [pokemons, setPokemons] = useState<Pokemon[]>([])
-  const [page, setPage] = useState<string | null>('?offset=0&limit=50')
 
-  useEffect(() => getPokemons(), [])
+  // ------------------------------
 
-  function getPokemons() {
-    const { '@Pokedex/token': token } = parseCookies()
-
-    if (!token) {
-      return
-    }
-
-    const storagedListPokemons = localStorage.getItem('@Pokedex:pokemons')
-
-    if (storagedListPokemons) {
-      const storageParsed = JSON.parse(storagedListPokemons)
-
-      setPage(storageParsed.nextPage)
-      setPokemons(storageParsed.pokemons)
-    } else if (pokemons.length <= 0) {
-      api.get(`/pokemon/${page}`).then(({ data }) => {
-        setPage(data.nextPage)
-        setPokemons(data.pokemons)
-      })
-    }
-  }
-
-  function savePokemonsStorage(nextPage: string, data: Pokemon[]) {
-    if (!data) {
-      return
-    }
-
-    setPage(nextPage)
+  const savePokemonsStorage = (data: Pokemon[]) => {
     setPokemons(data)
-
-    localStorage.setItem(
-      '@Pokedex:pokemons',
-      JSON.stringify({ nextPage, pokemons: data })
-    )
+    localStorage.setItem('@Pokedex:pokemons', JSON.stringify(data))
   }
 
-  function handleLike(pokemon: Pokemon, userData?: User) {
-    let userUpdated: User
+  // ------------------------------
 
-    const pokemonsUpdated = pokemons.map(item =>
-      item.id === pokemon.id ? { ...item, isLiked: !pokemon.isLiked } : item
-    )
+  const getPokemonsFromStorage = () => {
+    const listPokemonsStoraged = localStorage.getItem('@Pokedex:pokemons')
+    if (!listPokemonsStoraged) return null
 
-    if (!userData) {
-      const pokemonUpdated = pokemonsUpdated.filter(
-        item => item.id === pokemon.id
+    const pokemonsStoraged = JSON.parse(listPokemonsStoraged)
+    if (pokemonsStoraged.length > 0) setPokemons(pokemonsStoraged)
+
+    const pageStoraged = localStorage.getItem('@Pokedex:page')
+    if (pageStoraged) return pageStoraged
+
+    return null
+  }
+
+  const getPokemons = useCallback(
+    async (page?: string) => {
+      try {
+        const updatedPage = page || '?offset=0&limit=50'
+        if (!page) {
+          const pageStoraged = getPokemonsFromStorage()
+          if (pageStoraged) return pageStoraged
+        }
+
+        const { data } = await api.get(`/pokemon/${updatedPage}`)
+        savePokemonsStorage([...pokemons, ...data.pokemons])
+        localStorage.setItem('@Pokedex:page', data.nextPage)
+
+        return data.nextPage
+      } catch (err: any) {
+        console.error(err.message)
+      }
+    },
+    [pokemons]
+  )
+
+  // ------------------------------
+
+  const handleLike = useCallback(
+    (pokemon: Pokemon, userData?: User) => {
+      if (!user) return
+
+      const pokemonsUpdated = pokemons.map((item) =>
+        item.id === pokemon.id ? { ...item, isLiked: !pokemon.isLiked } : item
       )
 
-      userUpdated = {
-        uid: user.uid,
-        name: user.name,
-        email: user.email,
-        password: user.password,
-        createdAt: user.createdAt,
-        pokemonStarred: user.pokemonStarred,
-        pokemonsLiked: pokemonUpdated[0].isLiked
-          ? [...user?.pokemonsLiked, pokemonUpdated[0]]
-          : user.pokemonsLiked.filter(
-              pokemonLiked => pokemonLiked.id !== pokemonUpdated[0].id
-            )
+      let userUpdated: User
+      if (!userData) {
+        const pokemonUpdated = pokemonsUpdated.filter((item) => item.id === pokemon.id)
+
+        userUpdated = {
+          uid: user.uid,
+          name: user.name,
+          email: user.email,
+          password: user.password,
+          createdAt: user.createdAt,
+          pokemonStarred: user.pokemonStarred,
+          pokemonsLiked: pokemonUpdated[0].isLiked
+            ? [...user.pokemonsLiked, pokemonUpdated[0]]
+            : user.pokemonsLiked.filter((pokemonLiked) => pokemonLiked.id !== pokemonUpdated[0].id)
+        }
+      } else {
+        userUpdated = {
+          ...userData,
+          pokemonsLiked: user.pokemonsLiked.filter((item) => item.id !== pokemon.id)
+        }
       }
-    } else {
-      userUpdated = {
-        ...userData,
-        pokemonsLiked: user.pokemonsLiked.filter(item => item.id !== pokemon.id)
+
+      savePokemonsStorage(pokemonsUpdated)
+
+      api.put('/user/', { user: userUpdated }).then(({ data }) => setUser(data.user))
+    },
+    [pokemons, setUser, user]
+  )
+
+  const handleStar = useCallback(
+    (pokemon: Pokemon) => {
+      const pokemonUpdated = {
+        ...pokemon,
+        isStarred: !pokemon.isStarred
       }
-    }
 
-    savePokemonsStorage(page, pokemonsUpdated)
-
-    api
-      .put('/user/', { user: userUpdated })
-      .then(({ data }) => setUser(data.user))
-  }
-
-  function handleStar(pokemon: Pokemon) {
-    const pokemonUpdated = {
-      ...pokemon,
-      isStarred: !pokemon.isStarred
-    }
-
-    const pokemonsUpdated = pokemons.map(item =>
-      item.id === pokemon.id ? pokemonUpdated : { ...item, isStarred: false }
-    )
-
-    const userUpdated: User = {
-      ...user,
-      pokemonStarred: pokemonUpdated,
-      pokemonsLiked: user.pokemonsLiked.map(item =>
+      const pokemonsUpdated = pokemons.map((item) =>
         item.id === pokemon.id ? pokemonUpdated : { ...item, isStarred: false }
       )
-    }
 
-    savePokemonsStorage(page, pokemonsUpdated)
+      savePokemonsStorage(pokemonsUpdated)
 
-    api
-      .put('/user/', { user: userUpdated })
-      .then(({ data }) => setUser(data.user))
-  }
+      const userUpdated: User = {
+        ...user,
+        pokemonStarred: pokemonUpdated,
+        pokemonsLiked: user.pokemonsLiked.map((item) =>
+          item.id === pokemon.id ? pokemonUpdated : { ...item, isStarred: false }
+        )
+      }
 
-  return (
-    <PokemonsContext.Provider
-      value={{
-        pokemons,
-        savePokemonsStorage,
-        page,
-        getPokemons,
-        handleLike,
-        handleStar
-      }}
-    >
-      {children}
-    </PokemonsContext.Provider>
+      api.put('/user/', { user: userUpdated }).then(({ data }) => setUser(data.user))
+    },
+    [pokemons, user, setUser]
   )
+
+  // ------------------------------
+
+  const contextValues = useMemo(
+    () => ({
+      pokemons,
+      getPokemons,
+      handleLike,
+      handleStar
+    }),
+    [pokemons, getPokemons, handleLike, handleStar]
+  )
+
+  return <PokemonsContext.Provider value={contextValues}>{children}</PokemonsContext.Provider>
 }
 
-export function usePokemons() {
-  const context = useContext(PokemonsContext)
-
-  return context
-}
+export const usePokemons = () => useContext(PokemonsContext)

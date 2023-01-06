@@ -1,7 +1,9 @@
 import styled from 'styled-components'
 
+// -------------------------------------------------------------------
+
 interface ContainerProps {
-  textColor: string
+  readonly textColor: string
 }
 
 export const Container = styled.div<ContainerProps>`

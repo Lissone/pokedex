@@ -1,80 +1,23 @@
 import styled from 'styled-components'
 
+// -------------------------------------------------------------------
+
 export const Container = styled.header`
-  height: 11.875rem;
+  padding-bottom: 2rem;
 
   display: flex;
   justify-content: space-between;
 
   border-bottom: 1px solid var(--gray-600);
 
-  div {
-    width: 8.75rem;
-
-    display: flex;
-    flex-direction: column;
-
-    > svg {
-      width: 5rem;
-      height: 5rem;
-
-      cursor: pointer;
-
-      color: var(--gray-600);
-
-      transition: filter 0.4s;
-
-      &:hover {
-        filter: brightness(0.8);
-      }
-    }
-
-    button {
-      padding: 0.5rem 1.5rem;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      gap: 0.5rem;
-      border: 2px solid var(--blue-200);
-      border-radius: 0.5rem;
-
-      background: transparent;
-
-      svg {
-        height: 25px;
-        width: 25px;
-
-        color: var(--blue-200);
-      }
-
-      span {
-        font-weight: 500;
-
-        color: var(--white);
-      }
-
-      transition: filter 0.4s;
-
-      &:hover {
-        filter: brightness(0.7);
-      }
-    }
-  }
-
   @media (max-width: 850px) {
-    height: 100%;
-    padding-bottom: 2rem;
-
-    justify-content: center;
-
-    > div {
-      display: none;
-    }
+    display: none;
   }
 `
-export const Content = styled.main`
+
+export const Content = styled.div`
+  max-width: 26rem;
+
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+// -------------------------------------------------------------------
+
 export const Container = styled.div`
   width: 100%;
   height: 5rem;
@@ -102,7 +104,7 @@ export const IconLink = styled.a`
     transform: scale(1.2);
 
     svg {
-      color: var(--primary);
+      color: var(--purple-500);
     }
   }
 `

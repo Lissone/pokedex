@@ -1,8 +1,10 @@
 import ReactLoading from 'react-loading'
 
+// -------------------------------------------------------------------
+
 interface LoadProps {
-  type: any
-  color: string
+  readonly type: any
+  readonly color: string
 }
 
 export function Load({ type, color }: LoadProps) {

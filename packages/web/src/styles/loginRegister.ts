@@ -1,6 +1,7 @@
-import styled from 'styled-components'
-import Link from 'next/link'
 import { Form as Unform } from '@unform/web'
+import styled from 'styled-components'
+
+// -------------------------------------------------------------------
 
 export const Container = styled.main`
   min-height: 100vh;
@@ -129,13 +130,15 @@ export const Divider = styled.div`
   }
 `
 
-export const TextLink = styled(Link)`
-  color: var(--primary);
-  background: transparent;
+export const TextLink = styled.a`
+  text-decoration: none;
 
-  transition: filter 0.4s;
+  color: var(--purple-500);
+
+  transition: all 0.4s;
 
   &:hover {
+    text-decoration: underline;
     filter: brightness(0.9);
   }
 `

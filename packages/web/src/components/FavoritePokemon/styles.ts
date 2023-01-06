@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+// -------------------------------------------------------------------
+
 export const Container = styled.button`
   height: 8.75rem;
   width: 8.75rem;
@@ -19,6 +21,10 @@ export const Container = styled.button`
 
   transition: transform 0.4s;
 
+  &:hover {
+    border: 2px solid var(--purple-500);
+  }
+
   svg,
   img {
     width: 5.5rem;
@@ -29,8 +35,10 @@ export const Container = styled.button`
 
   span {
     width: 100%;
-    position: absolute;
     margin-right: 3.1rem;
+
+    display: none;
+    position: absolute;
 
     font-size: 1.2rem;
     font-weight: 200;
@@ -51,6 +59,7 @@ export const Container = styled.button`
 
     span {
       opacity: 1;
+      display: flex;
     }
   }
 

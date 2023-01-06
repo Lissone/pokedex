@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+// -------------------------------------------------------------------
+
 export const Container = styled.main`
   display: flex;
   flex-direction: column;
@@ -29,14 +31,8 @@ export const Content = styled.div`
     justify-content: space-between;
     align-items: center;
 
-    .like-button {
-      width: 4rem;
-      height: 4rem;
-
-      img {
-        width: 4rem;
-        height: 4rem;
-      }
+    button {
+      background: transparent;
     }
 
     svg {
@@ -51,6 +47,11 @@ export const Content = styled.div`
 
       &:hover {
         filter: brightness(0.8);
+      }
+
+      @media (max-width: 340px) {
+        width: 4rem;
+        height: 4rem;
       }
     }
 
@@ -128,7 +129,7 @@ export const PokemonAvatar = styled.div`
   align-items: center;
   justify-content: center;
 
-  border: 2px solid var(--primary);
+  border: 2px solid var(--purple-500);
   border-radius: 8.5rem;
 
   -webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
@@ -223,7 +224,7 @@ export const Fields = styled.div`
 `
 
 interface FieldProps {
-  align: 'center' | 'start'
+  readonly align: 'center' | 'start'
 }
 
 export const Field = styled.div<FieldProps>`
@@ -275,17 +276,22 @@ export const EvolutionRow = styled.div`
   margin-top: 5rem;
 
   display: flex;
-  align-items: center;
   justify-content: center;
 
-  gap: 2rem;
+  .evolutionItem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  > img:nth-child(1) {
-    display: none;
+    gap: 2rem;
+
+    @media (max-width: 1140px) {
+      gap: 0;
+    }
   }
 
-  @media (max-width: 1140px) {
-    gap: 0;
+  .evolutionItem:nth-child(1) > img {
+    display: none;
   }
 
   @media (max-width: 970px) {
@@ -297,12 +303,14 @@ export const EvolutionRow = styled.div`
   @media (max-width: 680px) {
     flex-direction: column;
 
-    > img {
-      width: 12rem;
+    .evolutionItem {
+      flex-direction: column;
 
-      -ms-transform: rotate(90deg);
-      -webkit-transform: rotate(90deg);
-      transform: rotate(90deg);
+      > img {
+        -ms-transform: rotate(90deg);
+        -webkit-transform: rotate(90deg);
+        transform: rotate(90deg);
+      }
     }
   }
 `

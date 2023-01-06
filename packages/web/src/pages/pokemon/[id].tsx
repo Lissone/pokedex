@@ -1,17 +1,18 @@
 import Head from 'next/head'
-import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { parseCookies } from 'nookies'
 import { IoChevronBack } from 'react-icons/io5'
 
-import { getApiClient } from '../../services/axios'
-import { usePokemons } from '../../hooks/usePokemons'
+import { getApiClient } from '@services/api'
 
-import { MobileHeader } from '../../components/MobileHeader'
-import { LikeButton } from '../../components/LikeButton'
-import { Pokemon } from '../../components/PokemonCard'
-import { TypeBox } from '../../components/TypeBox'
+import { useAuth } from '@hooks/useAuth'
+import { usePokemons, Pokemon } from '@hooks/usePokemons'
+
+import { LikeIcon } from '@components/Icon/LikeIcon'
+import { MobileHeader } from '@components/MobileHeader'
+import { TypeBox } from '@components/TypeBox'
+
+import { withSSRAuth } from '@utils/withSSRAuth'
 
 import {
   Container,
@@ -27,39 +28,36 @@ import {
   Divider,
   EvolutionRow,
   PokemonAvatarEvolution
-} from '../../styles/pokemonDetails'
+} from '@styles/pokemonDetails'
+
+// -------------------------------------------------------------------
 
 interface PokemonDetailsProps {
-  data: Pokemon
+  readonly data: Pokemon
 }
 
 export default function PokemonDetails({ data }: PokemonDetailsProps) {
-  const router = useRouter()
-
+  const { user } = useAuth()
   const { handleLike } = usePokemons()
+  const router = useRouter()
 
   const [pokemon, setPokemon] = useState(data)
 
   const heightFormatted = (Number(pokemon.height) / 10).toString()
   const weightFormatted = (Number(pokemon.weight) / 10).toString()
-  const abilitiesFormatted = pokemon.abilities
-    .join(', ')
-    .replace(/\b\w/g, l => l.toUpperCase())
-  const pokemonNameFormatted = pokemon.name.replace(/\b\w/g, l =>
-    l.toUpperCase()
-  )
+  const abilitiesFormatted = pokemon.abilities.join(', ').replace(/\b\w/g, (l) => l.toUpperCase())
+  const pokemonNameFormatted = pokemon.name.replace(/\b\w/g, (l) => l.toUpperCase())
 
-  function handleClickLike(item: Pokemon) {
+  const handleClickLike = (item: Pokemon) => {
     const pokemonUpdated = { ...item, isLiked: !pokemon.isLiked }
-
     setPokemon(pokemonUpdated)
 
     handleLike(item)
   }
 
-  function handleClickReturn() {
-    router.back()
-  }
+  // ------------------------------
+
+  if (!user) return null
 
   return (
     <>
@@ -72,13 +70,11 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
       <Container>
         <Content>
           <header>
-            <IoChevronBack onClick={handleClickReturn} />
+            <IoChevronBack onClick={() => router.back()} />
 
-            <LikeButton
-              className="like-button"
-              pokemon={pokemon}
-              handleLike={() => handleClickLike(pokemon)}
-            />
+            <button type="button" className="like-button" onClick={() => handleClickLike(pokemon)}>
+              <LikeIcon checked={pokemon.isLiked} />
+            </button>
           </header>
 
           <Band>
@@ -121,7 +117,7 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
                   <Field align="start">
                     <span>Tipo</span>
                     <Row>
-                      {pokemon.types.map(type => (
+                      {pokemon.types.map((type) => (
                         <TypeBox text={type} />
                       ))}
                     </Row>
@@ -131,25 +127,22 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
             </Row>
 
             <EvolutionRow>
-              {pokemon.evolutions.length - 1 >= 1 &&
-                pokemon.evolutions.map(evolution => (
-                  <>
-                    <img src="/images/next.svg" alt="Evolui para..." />
+              {pokemon.evolutions.length - 1 >= 1
+                ? pokemon.evolutions.map((evolution) => (
+                    <div key={evolution.id} className="evolutionItem">
+                      <img src="/images/next.svg" alt="Evolui para..." />
 
-                    <PokemonAvatarEvolution>
-                      <img src={evolution.photo} alt={evolution.name} />
+                      <PokemonAvatarEvolution>
+                        <img src={evolution.photo} alt={evolution.name} />
 
-                      <Field align="center">
-                        <span>#{evolution.id}</span>
-                        <p>
-                          {evolution.name.replace(/\b\w/g, l =>
-                            l.toUpperCase()
-                          )}
-                        </p>
-                      </Field>
-                    </PokemonAvatarEvolution>
-                  </>
-                ))}
+                        <Field align="center">
+                          <span>#{evolution.id}</span>
+                          <p>{evolution.name.replace(/\b\w/g, (l) => l.toUpperCase())}</p>
+                        </Field>
+                      </PokemonAvatarEvolution>
+                    </div>
+                  ))
+                : null}
             </EvolutionRow>
           </CardContent>
         </Content>
@@ -158,21 +151,11 @@ export default function PokemonDetails({ data }: PokemonDetailsProps) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ctx => {
+// -------------------------------------------------------------------
+
+export const getServerSideProps = withSSRAuth(async (ctx) => {
   const apiClient = getApiClient(ctx)
-  const { '@Pokedex/token': token } = parseCookies(ctx)
-
-  if (!token) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false
-      }
-    }
-  }
-
   const { id } = ctx.params
-
   const { data } = await apiClient.get(`/pokemon/${id}`)
 
   return {
@@ -180,4 +163,4 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
       data
     }
   }
-}
+})

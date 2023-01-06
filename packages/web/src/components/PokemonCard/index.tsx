@@ -1,65 +1,37 @@
+/* eslint-disable import/no-cycle */
 import Image from 'next/image'
 
-import { LikeButton } from '../LikeButton'
-import { StarButton } from '../StarButton'
+import { Pokemon } from '@hooks/usePokemons'
 
-import {
-  Container,
-  PokemonAvatar,
-  Fields,
-  Field,
-  Divider,
-  Buttons
-} from './styles'
+import { LikeIcon } from '@components/Icon/LikeIcon'
+import { StarIcon } from '@components/Icon/StarIcon'
 
-export interface Pokemon {
-  id: string
-  name: string
-  photo: string
-  height: string
-  weight: string
-  isStarred: boolean
-  isLiked: boolean
-  types: string[]
-  abilities: string[]
-  evolutions?: Pokemon[] | null
-}
+import { Container, PokemonAvatar, Fields, Field, Divider, Buttons, LikeButton, StarButton } from './styles'
+
+// -------------------------------------------------------------------
 
 interface PokemonCardProps {
-  pokemon: Pokemon
-  starIcon?: boolean
-  onClick?: (pokemonId: string) => void
-  handleLike: (pokemon: Pokemon) => void
-  handleStar?: (pokemon: Pokemon) => void
+  readonly pokemon: Pokemon
+  readonly starIcon?: boolean
+  readonly onClick?: (pokemonId: string) => void
+  readonly handleLike: (pokemon: Pokemon) => void
+  readonly handleStar?: (pokemon: Pokemon) => void
 }
 
-export function PokemonCard({
-  pokemon,
-  onClick,
-  starIcon = false,
-  handleLike,
-  handleStar
-}: PokemonCardProps) {
-  const formattedTypes = pokemon.types
-    .join(', ')
-    .replace(/\b\w/g, l => l.toUpperCase())
+export function PokemonCard({ pokemon, onClick, starIcon = false, handleLike, handleStar }: PokemonCardProps) {
+  const formattedTypes = pokemon.types.join(', ').replace(/\b\w/g, (l) => l.toUpperCase())
 
   return (
     <Container>
       <div onClick={() => onClick(pokemon.id)}>
         <PokemonAvatar className="avatar">
-          <Image
-            width={64}
-            height={64}
-            src={pokemon.photo}
-            alt={pokemon.name}
-          />
+          <Image width={64} height={64} src={pokemon.photo} alt={pokemon.name} />
         </PokemonAvatar>
 
         <Fields>
           <Field>
             <span>Nome</span>
-            <p>{pokemon.name.replace(/\b\w/g, l => l.toUpperCase())}</p>
+            <p>{pokemon.name.replace(/\b\w/g, (l) => l.toUpperCase())}</p>
           </Field>
 
           <Field>
@@ -75,16 +47,15 @@ export function PokemonCard({
         </Divider>
 
         <Buttons starIcon={starIcon}>
-          <LikeButton
-            pokemon={pokemon}
-            handleLike={() => handleLike(pokemon)}
-          />
-          {starIcon && (
-            <StarButton
-              pokemon={pokemon}
-              handleStar={() => handleStar(pokemon)}
-            />
-          )}
+          <LikeButton type="button" onClick={() => handleLike(pokemon)}>
+            <LikeIcon checked={pokemon.isLiked} />
+          </LikeButton>
+
+          {starIcon ? (
+            <StarButton type="button" onClick={() => handleStar(pokemon)}>
+              <StarIcon checked={pokemon.isStarred} />
+            </StarButton>
+          ) : null}
         </Buttons>
       </aside>
     </Container>

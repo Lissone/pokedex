@@ -1,16 +1,18 @@
-import { InputHTMLAttributes, useEffect, useRef } from 'react'
 import { useField } from '@unform/core'
+import { InputHTMLAttributes, useEffect, useRef } from 'react'
 
 import { Container, InputContainer, Error } from './styles'
 
+// -------------------------------------------------------------------
+
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  name: string
-  color?: string
+  readonly name: string
+  readonly color?: string
 }
 
-export function Input({ color = 'black', name, ...rest }: InputProps) {
-  const inputRef = useRef(null)
+export function Input({ name, color = 'black', ...rest }: InputProps) {
   const { fieldName, registerField, error } = useField(name)
+  const inputRef = useRef(null)
 
   useEffect(() => {
     registerField({
@@ -22,14 +24,8 @@ export function Input({ color = 'black', name, ...rest }: InputProps) {
 
   return (
     <Container>
-      <InputContainer
-        color={color}
-        ref={inputRef}
-        onChange={e => e.target.value}
-        {...rest}
-      />
-
-      {error && <Error>{error}</Error>}
+      <InputContainer color={color} ref={inputRef} onChange={(e) => e.target.value} {...rest} />
+      {error ? <Error>{error}</Error> : null}
     </Container>
   )
 }

@@ -1,51 +1,50 @@
-import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useState,
-  useEffect
-} from 'react'
-import { setCookie, parseCookies, destroyCookie } from 'nookies'
+/* eslint-disable import/no-cycle */
 import Router from 'next/router'
+import { setCookie, parseCookies, destroyCookie } from 'nookies'
+import React, { createContext, ReactNode, useContext, useState, useEffect, useMemo, useCallback } from 'react'
 
-import { api } from '../services/api'
-import { firebase, auth } from '../services/firebase'
+import { api } from '@services/api'
+import { firebase, auth } from '@services/firebase'
 
-import { Pokemon } from '../components/PokemonCard'
+import { Pokemon } from './usePokemons'
+
+// -------------------------------------------------------------------
+
+export interface User {
+  readonly uid: string
+  readonly name: string
+  readonly email: string
+  readonly password: string
+  readonly createdAt: string
+  readonly pokemonStarred?: Pokemon
+  readonly pokemonsLiked?: Pokemon[]
+}
 
 interface SignInData {
-  email: string
-  password: string
+  readonly email: string
+  readonly password: string
 }
 
 interface SignUpData {
-  name: string
-  email: string
-  password: string
-}
-
-export interface User {
-  uid: string
-  name: string
-  email: string
-  password: string
-  createdAt: string
-  pokemonStarred?: Pokemon
-  pokemonsLiked?: Pokemon[]
+  readonly name: string
+  readonly email: string
+  readonly password: string
 }
 
 interface AuthContextType {
-  user: User | null
-  setUser: (user: User | null) => void
-  signInWithEmailPassword: (data: SignInData) => Promise<void>
-  signInWithGoogle: () => Promise<void>
-  signUp: (data: SignUpData) => Promise<void>
-  signOut: () => Promise<void>
+  readonly user: User | null
+  readonly setUser: (user: User | null) => void
+  readonly signInWithEmailPassword: (data: SignInData) => Promise<void>
+  readonly signInWithGoogle: () => Promise<void>
+  readonly signUp: (data: SignUpData) => Promise<void>
+  readonly signOut: () => void
 }
 
 interface AuthContextProviderProps {
-  children: ReactNode
+  readonly children: ReactNode
 }
+
+// -------------------------------------------------------------------
 
 export const AuthContext = createContext({} as AuthContextType)
 
@@ -56,13 +55,14 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
     const { '@Pokedex/token': token } = parseCookies()
 
     if (token) {
-      api.defaults.headers.authorization = `Bearer ${token}`
-
       api.get('/user/recover').then(({ data }) => setUser(data.user))
+      api.defaults.headers.authorization = `Bearer ${token}`
     }
   }, [])
 
-  async function signInWithEmailPassword({ email, password }: SignInData) {
+  // ------------------------------
+
+  const signInWithEmailPassword = useCallback(async ({ email, password }: SignInData) => {
     try {
       const { data } = await api.post('/user/authenticate', {
         email,
@@ -74,12 +74,12 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
       setCookie(undefined, '@Pokedex/token', data.token, {
         maxAge: data.tokenExpires
       })
-
       setUser(data.user)
+
       localStorage.removeItem('@Pokedex:pokemons')
 
       Router.push('/home')
-    } catch (err) {
+    } catch (err: any) {
       switch (err.response.data.message) {
         case 'User not found':
           throw new Error('Usuário não esta cadastrado')
@@ -89,9 +89,34 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
           throw new Error(err)
       }
     }
-  }
+  }, [])
 
-  async function signUp(userSignUp: SignUpData) {
+  const signInWithGoogle = useCallback(async () => {
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider()
+      const result = await auth.signInWithPopup(provider)
+
+      if (result.user) {
+        const { displayName, email, uid } = result.user
+
+        if (!displayName) {
+          throw new Error('Informações da sua conta Google não suficientes para criar sua Pokedex!')
+        }
+
+        signInWithEmailPassword({ email, password: uid }).catch((ret) => {
+          ret.name = ''
+          throw new Error(ret.toString())
+        })
+      }
+    } catch (err: any) {
+      if (err.code === 'auth/popup-closed-by-user') return
+      throw new Error(err)
+    }
+  }, [signInWithEmailPassword])
+
+  // ------------------------------
+
+  const signUp = useCallback(async (userSignUp: SignUpData) => {
     try {
       const { data } = await api.post('/user/register', userSignUp)
 
@@ -105,7 +130,7 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
       localStorage.removeItem('@Pokedex:pokemons')
 
       Router.push('/home')
-    } catch (err) {
+    } catch (err: any) {
       switch (err.response.data.message) {
         case 'User is already registered':
           Router.push('/')
@@ -114,69 +139,33 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
           throw new Error(err)
       }
     }
-  }
+  }, [])
 
-  async function signInWithGoogle() {
-    try {
-      const provider = new firebase.auth.GoogleAuthProvider()
+  // ------------------------------
 
-      const result = await auth.signInWithPopup(provider)
-
-      if (result.user) {
-        const { displayName, email, uid } = result.user
-
-        if (!displayName) {
-          throw new Error('Missing information from Google Account')
-        }
-
-        signInWithEmailPassword({ email, password: uid }).catch(ret => {
-          ret.name = ''
-
-          if (ret.toString() === 'Usuário não esta cadastrado') {
-            signUp({
-              name: displayName,
-              email,
-              password: uid
-            })
-          }
-        })
-      }
-    } catch (err) {
-      if (err.code === 'auth/popup-closed-by-user') {
-        return
-      }
-
-      throw new Error(err)
-    }
-  }
-
-  async function signOut() {
-    await destroyCookie(undefined, '@Pokedex/token')
+  const signOut = () => {
+    destroyCookie(undefined, '@Pokedex/token')
     localStorage.removeItem('@Pokedex:pokemons')
-
     setUser(null)
 
     Router.push('/')
   }
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        setUser,
-        signInWithEmailPassword,
-        signInWithGoogle,
-        signUp,
-        signOut
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+  // ------------------------------
+
+  const contextValues = useMemo(
+    () => ({
+      user,
+      setUser,
+      signInWithEmailPassword,
+      signInWithGoogle,
+      signUp,
+      signOut
+    }),
+    [signInWithEmailPassword, signInWithGoogle, signUp, user]
   )
+
+  return <AuthContext.Provider value={contextValues}>{children}</AuthContext.Provider>
 }
 
-export function useAuth() {
-  const context = useContext(AuthContext)
-
-  return context
-}
+export const useAuth = () => useContext(AuthContext)

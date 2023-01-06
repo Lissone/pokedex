@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+// -------------------------------------------------------------------
+
 export const Container = styled.div`
   width: 100%;
 
@@ -9,7 +11,7 @@ export const Container = styled.div`
 `
 
 interface InputContainerProps {
-  color: string
+  readonly color: string
 }
 
 export const InputContainer = styled.input<InputContainerProps>`
@@ -30,7 +32,9 @@ export const InputContainer = styled.input<InputContainerProps>`
 `
 
 export const Error = styled.div`
-  margin: 0.7rem 0;
+  margin: 0.4rem 0;
+
+  color: var(--red-500);
 
   font-weight: 200;
 `

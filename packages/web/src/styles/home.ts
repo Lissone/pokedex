@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+// -------------------------------------------------------------------
+
 export const Container = styled.main`
   display: flex;
   flex-direction: column;
@@ -21,31 +23,10 @@ export const Content = styled.div`
   background: var(--gray-750);
 
   > div {
+    margin-top: 2.8rem;
+
     display: flex;
     flex-direction: column;
-
-    input {
-      height: 3.125rem;
-      width: 21rem;
-      padding-left: 3rem;
-      padding-right: 1rem;
-      margin-top: 2.8rem;
-
-      border: 2px solid var(--blue-200);
-      border-radius: 0.5rem;
-
-      color: var(--blue-200);
-      background: var(--gray-750);
-
-      background-image: url('/images/search.svg');
-      background-size: 1.5rem;
-      background-repeat: no-repeat;
-      background-position: 0.85rem 0.65rem;
-
-      &::placeholder {
-        color: var(--blue-200);
-      }
-    }
 
     @media (max-width: 1000px) {
       align-items: center;
@@ -53,6 +34,10 @@ export const Content = styled.div`
       input {
         width: 30.5rem;
       }
+    }
+
+    @media (max-width: 850px) {
+      margin-top: 1.8rem;
     }
 
     @media (max-width: 520px) {
@@ -106,10 +91,10 @@ export const MorePokemons = styled.button`
   justify-content: center;
 
   gap: 0.5rem;
-  border: 2px solid var(--blue-200);
+  border: 2px solid var(--gray-600);
   border-radius: 0.5rem;
 
-  background: var(--blue-900);
+  background: var(--gray-700);
 
   span {
     font-weight: 500;
@@ -117,9 +102,12 @@ export const MorePokemons = styled.button`
     color: var(--blue-200);
   }
 
-  transition: filter 0.4s ease;
+  transition: all 0.4s ease;
 
   &:hover {
-    filter: brightness(0.8);
+    border: 2px solid var(--blue-200);
+    background: var(--gray-800);
+
+    filter: brightness(0.85);
   }
 `

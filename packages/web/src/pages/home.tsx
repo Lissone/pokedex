@@ -1,143 +1,125 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
-import { GetServerSideProps } from 'next'
-import { parseCookies } from 'nookies'
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import { api } from '../services/api'
-import { usePokemons } from '../hooks/usePokemons'
+import { useAuth } from '@hooks/useAuth'
+import { usePokemons } from '@hooks/usePokemons'
 
-import { MobileHeader } from '../components/MobileHeader'
-import { Header } from '../components/Header'
-import { PokemonCard } from '../components/PokemonCard'
-import { Load } from '../components/Load'
+import { Header } from '@components/Header'
+import { InputFilter } from '@components/InputFilter'
+import { Load } from '@components/Load'
+import { MobileHeader } from '@components/MobileHeader'
+import { PokemonCard } from '@components/PokemonCard'
 
-import {
-  Container,
-  Content,
-  ListPokemonCards,
-  FooterContent,
-  MorePokemons
-} from '../styles/home'
+import { withSSRAuth } from '@utils/withSSRAuth'
+
+import { Container, Content, ListPokemonCards, FooterContent, MorePokemons } from '@styles/home'
+
+// -------------------------------------------------------------------
 
 export default function Home() {
+  const { user } = useAuth()
+  const { pokemons, getPokemons, handleLike } = usePokemons()
   const router = useRouter()
 
-  const { getPokemons, pokemons, savePokemonsStorage, page, handleLike } =
-    usePokemons()
-
   const [search, setSearch] = useState('')
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [page, setPage] = useState('')
+
+  // ------------------------------
 
   useEffect(() => {
-    getPokemons()
-
-    setLoading(false)
-  }, [])
-
-  function handleMorePokemons() {
-    if (page === null) {
-      return
-    }
-
     setLoading(true)
-    api
-      .get(`/pokemon/${page}`)
-      .then(({ data }) => {
-        setLoading(false)
-
-        savePokemonsStorage(data.nextPage, [...pokemons, ...data.pokemons])
-      })
-      .catch(() => {
-        toast.error('Ocorreu um erro inesperado', {
+    getPokemons()
+      .then((updatedPage) => setPage(updatedPage))
+      .catch(() =>
+        toast.error('Ocorreu um erro inesperado ao buscar os pokémons!', {
           hideProgressBar: true
         })
+      )
+      .finally(() => setLoading(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // ------------------------------
+
+  const handleMorePokemons = async () => {
+    try {
+      setLoading(true)
+      const nextPage = await getPokemons(page)
+      setPage(nextPage)
+    } catch {
+      toast.error('Ocorreu um erro inesperado ao buscar os pokémons!', {
+        hideProgressBar: true
       })
+    } finally {
+      setLoading(false)
+    }
   }
 
-  function handleClickPokemonCard(pokemonId: string) {
-    router.push(`/pokemon/${pokemonId}`)
-  }
+  // ------------------------------
+
+  if (!user) return null
 
   return (
     <>
       <Head>
-        <title>Início - Pokedex</title>
+        <title>Pokedex</title>
       </Head>
 
       <MobileHeader />
 
       <Container>
         <Content>
-          <Header />
-          <div>
-            <input
-              placeholder="Pesquise pelo nome do pokémon"
-              type="text"
-              onChange={event => setSearch(event.target.value)}
-            />
+          <Header
+            heading="Bem-vindo"
+            description="Nesta pokedex você poderá encontrar todos os pokemons que existem!"
+            pokemonStarred={user.pokemonStarred}
+          />
 
-            {pokemons.length > 0 && (
+          <div>
+            <InputFilter setSearch={setSearch} />
+
+            {pokemons.length > 0 ? (
               <>
                 <ListPokemonCards>
                   {pokemons
-                    .filter(pokemon => {
-                      if (search === '') {
-                        return pokemon
-                      }
-
-                      if (
-                        pokemon.name
-                          .toLowerCase()
-                          .includes(search.toLowerCase())
-                      ) {
-                        return pokemon
-                      }
-
+                    .filter((pokemon) => {
+                      if (search === '') return pokemon
+                      if (pokemon.name.toLowerCase().includes(search.toLowerCase())) return pokemon
                       return null
                     })
-                    .map(pokemon => (
+                    .map((pokemon) => (
                       <PokemonCard
                         key={pokemon.id}
                         pokemon={pokemon}
                         handleLike={handleLike}
-                        onClick={() => handleClickPokemonCard(pokemon.id)}
+                        onClick={() => router.push(`/pokemon/${pokemon.id}`)}
                       />
                     ))}
                 </ListPokemonCards>
 
-                {!loading && page !== null && (
+                {!loading && !!page ? (
                   <FooterContent>
                     <MorePokemons onClick={handleMorePokemons}>
                       <span>Carregar mais pokemons</span>
                     </MorePokemons>
                   </FooterContent>
-                )}
+                ) : null}
               </>
-            )}
+            ) : null}
           </div>
         </Content>
 
-        {loading && <Load type="cylon" color="#6D6D6D" />}
+        {loading ? <Load type="cylon" color="#6D6D6D" /> : null}
       </Container>
     </>
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ctx => {
-  const { '@Pokedex/token': token } = parseCookies(ctx)
+// -------------------------------------------------------------------
 
-  if (!token) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false
-      }
-    }
-  }
-
-  return {
-    props: {}
-  }
-}
+export const getServerSideProps = withSSRAuth(async () => ({
+  props: {}
+}))

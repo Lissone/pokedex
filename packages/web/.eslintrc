@@ -1,3 +1,107 @@
 {
-  "extends": ["next", "next/core-web-vitals"]
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+  "extends": [
+    "next",
+    "next/core-web-vitals",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "airbnb",
+    "eslint-config-prettier",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@typescript-eslint", "prettier", "eslint-plugin-import-helpers"],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 120,
+        "semi": false,
+        "singleQuote": true,
+        "trailingComma": "none",
+        "tabWidth": 2,
+        "arrowParens": "always",
+        "endOfLine": "auto",
+        "max-len": ["error", { "code": 120 }]
+      }
+    ],
+    "semi": [2, "never"],
+    "dot-notation": 0,
+    "consistent-return": "off",
+    "no-use-before-define": "off",
+    "no-undef": "off",
+    "no-plusplus": "off",
+    "no-else-return": "off",
+    "no-return-await": "off",
+    "no-param-reassign": [2, { "props": false }],
+    "no-unused-vars": ["error", { "args": "none", "caughtErrors": "none" }],
+    "array-callback-return": "off",
+    "import/no-unresolved": "off",
+    "import/prefer-default-export": "off",
+    "react/jsx-filename-extension": ["warn", { "extensions": [".tsx"] }],
+    "react/require-default-props": 0,
+    "react/jsx-props-no-spreading": "off",
+    "react/react-in-jsx-scope": "off",
+    "@next/next/no-img-element": "off",
+    "@typescript-eslint/no-unused-vars": ["warn", { "args": "none", "caughtErrors": "none" }],
+    "@typescript-eslint/no-use-before-define": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "jsx-a11y/anchor-is-valid": 0,
+    "jsx-a11y/control-has-associated-label": "error",
+    "jsx-a11y/media-has-caption": "off",
+    "jsx-a11y/click-events-have-key-events": "off",
+    "jsx-a11y/no-static-element-interactions": "off",
+    "jsx-a11y/no-noninteractive-element-interactions": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "import-helpers/order-imports": [
+      "warn",
+      {
+        "newlinesBetween": "always",
+        "groups": [
+          "module",
+          "/^@assets/",
+          "/^@routes/",
+          "/^@interfaces/",
+          "/^@services/",
+          "/^@libs/",
+          "/^@contexts/",
+          "/^@hooks/",
+          "/^@components/",
+          "/^@pages/",
+          "/^@utils/",
+          ["parent", "sibling", "index"],
+          "/^@styles/"
+        ],
+        "alphabetize": { "order": "asc", "ignoreCase": true }
+      }
+    ]
+  }
 }

@@ -1,73 +1,39 @@
 import { useRouter } from 'next/router'
-import { toast } from 'react-toastify'
-import { BiExit } from 'react-icons/bi'
-import { IoChevronBack } from 'react-icons/io5'
 
-import { useAuth } from '../../hooks/useAuth'
+import { useAuth } from '@hooks/useAuth'
+import { Pokemon } from '@hooks/usePokemons'
 
 import { FavoritePokemon } from '../FavoritePokemon'
-
+import { SignOutButton } from '../SignOutButton'
 import { Container, Content } from './styles'
 
+// -------------------------------------------------------------------
+
 interface HeaderProps {
-  favoritePokemon?: boolean
-  heading?: string
-  description?: string
+  readonly heading: string
+  readonly description: string
+  readonly pokemonStarred: Pokemon | undefined
 }
 
-export function Header({
-  favoritePokemon = true,
-  heading,
-  description
-}: HeaderProps) {
+export function Header({ heading, description, pokemonStarred }: HeaderProps) {
+  const { user, signOut } = useAuth()
   const router = useRouter()
 
-  const { user, signOut } = useAuth()
-
-  function handleClickPokemonAvatar() {
-    if (router.pathname === '/account') {
-      return
-    }
-
-    if (user.pokemonsLiked.length <= 0) {
-      toast.info('Curta um pokémon para selecionar o seu favorito 😊')
-
-      return
-    }
-
-    router.push('/account')
-  }
-
-  function handleClickReturn() {
-    router.back()
-  }
+  if (!user) return null
 
   return (
     <Container>
-      {favoritePokemon ? (
-        <FavoritePokemon
-          onClick={handleClickPokemonAvatar}
-          photo={user?.pokemonStarred ? user.pokemonStarred.photo : undefined}
-        />
-      ) : (
-        <div>
-          <IoChevronBack onClick={handleClickReturn} />
-        </div>
-      )}
+      <FavoritePokemon pokemonStarred={pokemonStarred} onClick={() => router.push('/account')} />
 
       <Content>
-        <h1>{heading || 'Bem-vindo'}</h1>
-        <strong>{user?.name}</strong>
+        <h1>{heading}</h1>
+        <strong>{user.name}</strong>
 
-        <span>{description || 'Chegou a hora de entrar no mundo pokémon'}</span>
+        <span>{description}</span>
       </Content>
 
       <div>
-        <button type="button" onClick={signOut}>
-          <span>SAIR</span>
-
-          <BiExit size={10} />
-        </button>
+        <SignOutButton onClick={signOut} />
       </div>
     </Container>
   )

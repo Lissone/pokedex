@@ -1,59 +1,44 @@
-import { useState } from 'react'
 import { useRouter } from 'next/router'
-import { BiExit } from 'react-icons/bi'
+import { useState } from 'react'
 import { FiMenu } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 
-import { useAuth } from '../../hooks/useAuth'
+import { useAuth } from '@hooks/useAuth'
 
 import { FavoritePokemon } from '../FavoritePokemon'
-
+import { SignOutButton } from '../SignOutButton'
 import { Container, Hamburguer, Menu } from './styles'
 
-export function MobileHeader() {
-  const router = useRouter()
+// -------------------------------------------------------------------
 
+export function MobileHeader() {
   const { user, signOut } = useAuth()
+  const router = useRouter()
 
   const [hamburguerIsOpen, setHamburguerIsOpen] = useState(false)
 
-  function handleClickPokemonAvatar() {
-    if (router.pathname === '/account') {
-      return
-    }
-
+  const handleClickPokemonAvatar = () => {
+    if (router.pathname === '/account') return
     if (user.pokemonsLiked.length <= 0) {
       toast.info('Curta um pokémon para selecionar o seu favorito 😊')
-
       return
     }
 
     router.push('/account')
   }
 
-  function handleClickReturn() {
-    router.push('/home')
-  }
-
   return (
     <Container>
-      <img src="/images/logo.png" alt="Pokedex" onClick={handleClickReturn} />
+      <img src="/images/logo.png" alt="Pokedex" onClick={() => router.push('/home')} />
 
       <Hamburguer onClick={() => setHamburguerIsOpen(!hamburguerIsOpen)}>
         <FiMenu size={40} />
       </Hamburguer>
 
       <Menu isOpen={hamburguerIsOpen}>
-        <FavoritePokemon
-          onClick={handleClickPokemonAvatar}
-          photo={user?.pokemonStarred ? user.pokemonStarred.photo : undefined}
-        />
+        <FavoritePokemon pokemonStarred={user.pokemonStarred} onClick={handleClickPokemonAvatar} />
 
-        <button className="exit" type="button" onClick={signOut}>
-          <span>SAIR</span>
-
-          <BiExit size={10} />
-        </button>
+        <SignOutButton onClick={signOut} />
       </Menu>
     </Container>
   )

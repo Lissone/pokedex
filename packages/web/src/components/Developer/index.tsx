@@ -3,6 +3,8 @@ import { CgMail } from 'react-icons/cg'
 
 import { Container, IconLink } from './styles'
 
+// -------------------------------------------------------------------
+
 export function Developer() {
   return (
     <Container>
