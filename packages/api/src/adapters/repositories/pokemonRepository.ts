@@ -1,113 +1,147 @@
 import { api } from '@external/services/pokeApi'
 
-import { IUser } from '@useCases/IUserRepository'
-import { IPokemonRepository, IPokemonsList, IPokemon } from '@useCases/IPokemonRepository'
+import { IPokemonRepository, IPokemonsList, IPokemon } from '@interfaces/pokemon'
+import { IUser } from '@interfaces/user'
 
-class PokemonRepository implements IPokemonRepository {
-  async getAll (user: IUser, { offset, limit }) : Promise<IPokemonsList> {
-    const { data } = await api.get(`/pokemon/?offset=${offset}&limit=${limit}`)
+// -------------------------------------------------------------------
+
+interface IPokemonListResponse {
+  next: string | null
+  previous: string | null
+  results: {
+    name: string
+    url: string
+  }[]
+}
+
+interface IPokemonResponse {
+  id: number
+  name: string
+  height: number
+  weight: number
+  types: {
+    type: {
+      name: string
+    }
+  }[]
+  abilities: {
+    ability: {
+      name: string
+    }
+  }[]
+  sprites: {
+    front_default: string
+    other: {
+      dream_world: {
+        front_default: string
+      }
+      'official-artwork': {
+        front_default: string
+      }
+    }
+  }
+}
+
+interface IPokemonEvolutionChainResponse {
+  chain: {
+    evolves_to: {
+      evolves_to: {
+        species: {
+          name: string
+        }
+      }[]
+      species: {
+        name: string
+      }
+    }[]
+    species: {
+      name: string
+    }
+  }
+}
+
+interface IPokemonSpecieResponse {
+  evolution_chain: {
+    url: string
+  }
+}
+
+// -------------------------------------------------------------------
+
+export class PokemonRepository implements IPokemonRepository {
+  async getAll(user: IUser, offset = '0', limit = '20') {
+    const { data } = await api.get<IPokemonListResponse>(`/pokemon/?offset=${offset}&limit=${limit}`)
 
     const pokemonsList: IPokemonsList = {
-      nextPage: data.next !== null ? `?${data.next.split('?')[1]}` : null,
-      previousPage: data.previous !== null ? `?${data.previous.split('?')[1]}` : null,
-      pokemons: await Promise.all<IPokemon>(
-        data.results.map(async (pokemon) => await this.getOne(pokemon.name, user, false))
-      )
+      nextPage: data.next ? `?${data.next.split('?')[1]}` : null,
+      previousPage: data.previous ? `?${data.previous.split('?')[1]}` : null,
+      pokemons: await Promise.all(data.results.map(result => this.getOne(result.name, user, false)))
     }
 
     return pokemonsList
   }
 
-  async getOne (name: string, user: IUser, singleConsult: boolean) : Promise<IPokemon | undefined> {
-    const { data } = await api.get(`/pokemon/${name}`)
+  async getOne(id: string, user: IUser, withEvolutions = true) {
+    const { data } = await api.get<IPokemonResponse>(`/pokemon/${id}`)
 
-    const { 'official-artwork': artWork } = data.sprites.other
-    const evolutions = singleConsult ? await this.getAllEvolutions(data.id) : null
+    const pokemon = this.pokemonMapper(data, user)
+    const evolutions = withEvolutions ? await this.getEvolutions(pokemon, user) : []
+
+    return { ...pokemon, evolutions }
+  }
+
+  // ------------------------------
+
+  private async getEvolutions(pokemon: IPokemon, user: IUser) {
+    const evolutions = [] as IPokemon[]
+
+    try {
+      const { data: pokemonSpecie } = await api.get<IPokemonSpecieResponse>(`/pokemon-species/${pokemon.id}`)
+      const { data: evolutionChain } = await api.get<IPokemonEvolutionChainResponse>(pokemonSpecie.evolution_chain.url)
+
+      let evolutionPokemon = await this.getOne(evolutionChain.chain.species.name, user, false)
+      evolutions.push(evolutionPokemon)
+
+      if (evolutionChain.chain.evolves_to.length > 0) {
+        const evolutionName = evolutionChain.chain.evolves_to[0].species.name
+        evolutionPokemon = await this.getOne(evolutionName, user, false)
+        evolutions.push(evolutionPokemon)
+      }
+
+      if (evolutionChain.chain.evolves_to.length > 0 && evolutionChain.chain.evolves_to[0].evolves_to.length > 0) {
+        const evolutionName = evolutionChain.chain.evolves_to[0].evolves_to[0].species.name
+        evolutionPokemon = await this.getOne(evolutionName, user, false)
+        evolutions.push(evolutionPokemon)
+      }
+    } catch {
+      return []
+    }
+
+    return evolutions
+  }
+
+  private pokemonMapper(pokemonResponse: IPokemonResponse, user: IUser) {
+    const { other: otherSprites, front_default: defaultSprite } = pokemonResponse.sprites
+    const { dream_world: spriteDreamWorld, 'official-artwork': spriteArtWork } = otherSprites
+    const photo = spriteDreamWorld.front_default || spriteArtWork.front_default || defaultSprite
+
+    const isLiked =
+      user.pokemonsLiked.length !== 0 ? user.pokemonsLiked.some(pokemon => pokemon.id === pokemonResponse.id) : false
+    const isStarred = user.pokemonStarred?.id === pokemonResponse.id
 
     const pokemon: IPokemon = {
-      id: data.id,
-      name: data.name,
-      photo: data.sprites.other.dream_world.front_default || artWork.front_default || data.sprites.front_default,
-      height: data.height,
-      weight: data.weight,
-      isLiked: user.pokemonsLiked ? user.pokemonsLiked.some(pokemon => pokemon.id === data.id) : false,
-      isStarred: user.pokemonStarred !== null ? user.pokemonStarred.id === data.id : false,
-      types: data.types.map(object => object.type.name),
-      abilities: data.abilities.map(object => object.ability.name),
-      evolutions
+      id: pokemonResponse.id,
+      name: pokemonResponse.name,
+      photo,
+      height: pokemonResponse.height,
+      weight: pokemonResponse.weight,
+      isLiked,
+      isStarred,
+      types: pokemonResponse.types.map(o => o.type.name),
+      abilities: pokemonResponse.abilities.map(o => o.ability.name),
+      evolutions: []
     }
 
     return pokemon
   }
-
-  async getAllEvolutions (id: string) : Promise<IPokemon[] | undefined> {
-    const evolutions = [] as IPokemon[]
-
-    await api.get(`/pokemon-species/${id}`).then(async ({ data }) => {
-      const evolutionChain = await api(data.evolution_chain.url)
-
-      const basePokemon = await api(evolutionChain.data.chain.species.url)
-      const pokemon = await api.get(`/pokemon/${basePokemon.data.id}`)
-      const { 'official-artwork': artWork } = pokemon.data.sprites.other
-
-      const pokemonUpdated: IPokemon = {
-        id: pokemon.data.id,
-        name: pokemon.data.name,
-        photo: pokemon.data.sprites.other.dream_world.front_default || artWork.front_default || pokemon.data.sprites.front_default,
-        height: pokemon.data.height,
-        weight: pokemon.data.weight,
-        types: pokemon.data.types.map(object => object.type),
-        abilities: pokemon.data.abilities.map(object => object.ability)
-      }
-
-      evolutions.push(pokemonUpdated)
-
-      if (evolutionChain.data.chain.evolves_to.length > 0) {
-        const evolution = await api(evolutionChain.data.chain.evolves_to[0].species.url)
-
-        const pokemon = await api.get(`/pokemon/${evolution.data.id}`)
-        const { 'official-artwork': artWorkEvolution } = pokemon.data.sprites.other
-
-        const pokemonUpdated: IPokemon = {
-          id: pokemon.data.id,
-          name: pokemon.data.name,
-          photo: pokemon.data.sprites.other.dream_world.front_default || artWorkEvolution.front_default || pokemon.data.sprites.front_default,
-          height: pokemon.data.height,
-          weight: pokemon.data.weight,
-          types: pokemon.data.types.map(object => object.type),
-          abilities: pokemon.data.abilities.map(object => object.ability)
-        }
-
-        evolutions.push(pokemonUpdated)
-      }
-
-      if (
-        evolutionChain.data.chain.evolves_to.length > 0 &&
-      evolutionChain.data.chain.evolves_to[0].evolves_to.length > 0
-      ) {
-        const evolution = await api(evolutionChain.data.chain.evolves_to[0].evolves_to[0].species.url)
-
-        const pokemon = await api.get(`/pokemon/${evolution.data.id}`)
-        const { 'official-artwork': artWorkEvolution2 } = pokemon.data.sprites.other
-
-        const pokemonUpdated: IPokemon = {
-          id: pokemon.data.id,
-          name: pokemon.data.name,
-          photo: pokemon.data.sprites.other.dream_world.front_default || artWorkEvolution2.front_default || pokemon.data.sprites.front_default,
-          height: pokemon.data.height,
-          weight: pokemon.data.weight,
-          types: pokemon.data.types.map(object => object.type),
-          abilities: pokemon.data.abilities.map(object => object.ability)
-        }
-
-        evolutions.push(pokemonUpdated)
-      }
-    }).catch(() => {
-      return undefined
-    })
-
-    return evolutions
-  }
 }
-
-export { PokemonRepository }

@@ -1,20 +1,18 @@
 import { database } from '@external/services/firebase'
 
-import { IUserRepository, IUser } from '@useCases/IUserRepository'
+import { IUserRepository, IUser } from '@interfaces/user'
 
-class UserRepository implements IUserRepository {
-  private get repository () {
+// -------------------------------------------------------------------
+
+export class UserRepository implements IUserRepository {
+  private get repository() {
     return database.collection('user')
   }
 
-  async getOne (email: string) : Promise<IUser | undefined> {
+  async getOne(email: string) {
     const doc = await this.repository.doc(email.toLowerCase()).get()
-
     const user = doc.data()
-
-    if (user === undefined) {
-      return
-    }
+    if (!user) return undefined
 
     return {
       uid: user.uid,
@@ -27,11 +25,8 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  async save (user: IUser) : Promise<IUser> {
+  async save(user: IUser) {
     await this.repository.doc(user.email.toLowerCase()).set(user)
-
     return user
   }
 }
-
-export { UserRepository }

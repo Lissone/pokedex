@@ -1,16 +1,21 @@
+/* eslint-disable no-console */
 import 'reflect-metadata'
 
 import './envConfig'
+import { app } from './app'
 import { database } from './services/firebase'
 
-import { app } from './app'
+// -------------------------------------------------------------------
 
-const port = process.env.PORT || 5000
+const PORT = process.env.PORT || 5000
 
-database.collection('Users').get().then(() => {
-  console.log('Connected to Firebase')
-})
+database
+  .collection('Users')
+  .get()
+  .then(() => {
+    console.log('Connected to Firebase')
+  })
 
-app.listen(port, () => {
-  console.log(`Listening on port: ${port}`)
+app.listen(PORT, () => {
+  console.log(`Listening on port: ${PORT}`)
 })

@@ -1,64 +1,60 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express'
 
-import { IPokemonRepository } from '@useCases/IPokemonRepository'
 import { UserRepository } from '@repositories/userRepository'
 
-class PokemonController {
-  repository: IPokemonRepository
+import { MSG } from '@shared/msg'
 
-  constructor (repository: IPokemonRepository) {
-    this.repository = repository
+import { IPokemonRepository } from '@interfaces/pokemon'
+import { IUserRepository } from '@interfaces/user'
+
+// -------------------------------------------------------------------
+
+export class PokemonController {
+  readonly pokemonRepository: IPokemonRepository
+  readonly userRepository: IUserRepository
+
+  constructor(pokemonRepository: IPokemonRepository, userRepository: UserRepository) {
+    this.pokemonRepository = pokemonRepository
+    this.userRepository = userRepository
   }
 
-  async getAllPokemons (req: Request, res: Response) : Promise<void> {
+  async getAllPokemons(req: Request, res: Response) {
     try {
       const { offset, limit } = req.query
       const { userDecoded } = req.body
 
-      const userRepository = new UserRepository()
-      const user = await userRepository.getOne(userDecoded.email)
-
-      if (user == null) {
-        res.status(401).json({ error: 'Token invalid' })
-        return
+      const user = await this.userRepository.getOne(userDecoded.email)
+      if (!user) {
+        return res.status(404).send({ message: MSG.USER_NOT_FOUND })
       }
 
-      const pokemons = await this.repository.getAll(user, {
-        offset: String(offset),
-        limit: String(limit)
-      })
+      const pokemons = await this.pokemonRepository.getAll(user, String(offset), String(limit))
 
-      res.status(200).json(pokemons)
-    } catch (err) {
-      res.status(500).send({ message: err.message })
+      return res.status(200).json(pokemons)
+    } catch (err: any) {
+      return res.status(500).send({ message: err.message })
     }
   }
 
-  async getOnePokemon (req: Request, res: Response) : Promise<void> {
+  async getOnePokemon(req: Request, res: Response) {
     try {
       const { id } = req.params
       const { userDecoded } = req.body
 
-      const userRepository = new UserRepository()
-      const user = await userRepository.getOne(userDecoded.email)
-
-      if (user == null) {
-        res.status(401).json({ error: 'Token invalid' })
-        return
+      const user = await this.userRepository.getOne(userDecoded.email)
+      if (!user) {
+        return res.status(404).send({ message: MSG.USER_NOT_FOUND })
       }
 
-      const pokemon = await this.repository.getOne(id, user, true)
-
-      if (pokemon === undefined) {
-        res.status(404).send({ message: 'Pokemon not found' })
-        return
+      const pokemon = await this.pokemonRepository.getOne(id, user)
+      if (!pokemon) {
+        return res.status(404).send({ message: MSG.POKEMON_NOT_FOUND })
       }
 
-      res.status(200).json(pokemon)
-    } catch (err) {
-      res.status(500).send({ message: err.message })
+      return res.status(200).json(pokemon)
+    } catch (err: any) {
+      return res.status(500).send({ message: err.message })
     }
   }
 }
-
-export { PokemonController }

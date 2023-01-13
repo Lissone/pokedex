@@ -4,15 +4,15 @@
 		"version": " 1.0.0 ",
 		"title": "Pokedex-Api",
 		"description": "This is an API to serve as user authentication backend, and bridge to another api.",
-		"author": "Leonardo Dias Lissone",
+		"author": "Leonardo Dias Lissone Santomero",
 		"Pokedex - Website": "https://pokedex-lissone.vercel.app/",
 		"termsOfService": "http://swagger.io/terms/",
 		"contact": {
 			"email": "leonardo.lissonez@gmail.com"
 		}
 	},
-	"host": "pokedex-lissone-api.herokuapp.com/api/",
-	"basePath": "v1",
+	"host": "localhost:5000/",
+	"basePath": "api/v1",
 	"tags": [
     {
 			"name": "User",
@@ -24,8 +24,7 @@
 		}
 	],
   "schemes": [
-    "http",
-    "https"
+    "http"
   ],
   "securityDefinitions": {
     "bearerAuth": {
