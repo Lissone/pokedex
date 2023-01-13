@@ -20,19 +20,17 @@ import { Container, Content, ListPokemonCards, FooterContent, MorePokemons } fro
 
 export default function Home() {
   const { user } = useAuth()
-  const { pokemons, getPokemons, handleLike } = usePokemons()
+  const { pokemons, page, getPokemons, handleLike } = usePokemons()
   const router = useRouter()
 
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(false)
-  const [page, setPage] = useState('')
 
   // ------------------------------
 
   useEffect(() => {
     setLoading(true)
     getPokemons()
-      .then((updatedPage) => setPage(updatedPage))
       .catch(() =>
         toast.error('Ocorreu um erro inesperado ao buscar os pokémons!', {
           hideProgressBar: true
@@ -45,17 +43,14 @@ export default function Home() {
   // ------------------------------
 
   const handleMorePokemons = async () => {
-    try {
-      setLoading(true)
-      const nextPage = await getPokemons(page)
-      setPage(nextPage)
-    } catch {
-      toast.error('Ocorreu um erro inesperado ao buscar os pokémons!', {
-        hideProgressBar: true
-      })
-    } finally {
-      setLoading(false)
-    }
+    setLoading(true)
+    getPokemons()
+      .catch(() =>
+        toast.error('Ocorreu um erro inesperado ao buscar os pokémons!', {
+          hideProgressBar: true
+        })
+      )
+      .finally(() => setLoading(false))
   }
 
   // ------------------------------

@@ -10,7 +10,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   readonly children?: ReactNode
 }
 
-export function Button({ title, color = 'primary', children, ...rest }: ButtonProps) {
+export function Button({ title, color = 'purple-500', children, ...rest }: ButtonProps) {
   return (
     <Container color={color} {...rest}>
       {children}
