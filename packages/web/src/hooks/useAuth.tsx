@@ -80,14 +80,7 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
       Router.push('/home')
     } catch (err: any) {
-      switch (err.response.data.message) {
-        case 'User not found':
-          throw new Error('Usuário não esta cadastrado')
-        case 'Invalid password':
-          throw new Error('Senha inválida')
-        default:
-          throw new Error(err)
-      }
+      throw new Error(err.response.data.message)
     }
   }, [])
 
@@ -131,13 +124,11 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
       Router.push('/home')
     } catch (err: any) {
-      switch (err.response.data.message) {
-        case 'User is already registered':
-          Router.push('/')
-          throw new Error('Usuário já está cadastrado')
-        default:
-          throw new Error(err)
+      if (err.response.data.message) {
+        Router.push('/')
+        throw new Error(err.response.data.message)
       }
+      throw new Error(err)
     }
   }, [])
 
