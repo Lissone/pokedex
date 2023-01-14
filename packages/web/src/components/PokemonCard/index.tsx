@@ -13,7 +13,7 @@ import { Container, PokemonAvatar, Fields, Field, Divider, Buttons, LikeButton, 
 interface PokemonCardProps {
   readonly pokemon: Pokemon
   readonly starIcon?: boolean
-  readonly onClick?: (pokemonId: string) => void
+  readonly onClick?: (pokemonId: number) => void
   readonly handleLike: (pokemon: Pokemon) => void
   readonly handleStar?: (pokemon: Pokemon) => void
 }
