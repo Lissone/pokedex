@@ -80,7 +80,7 @@ export function AuthProvider({ children }: AuthContextProviderProps) {
 
       Router.push('/home')
     } catch (err: any) {
-      if (err.response.data.message) {
+      if (err.response?.data?.message) {
         throw new Error(err.response.data.message)
       }
       throw new Error(err)
