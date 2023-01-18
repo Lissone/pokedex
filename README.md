@@ -122,8 +122,14 @@ PORT=5000
 SECRET_KEY=supersecret
 ```
 
-docker build -t lissone/pokedex-web .
-docker run --name pokedex-web -p 3000:3000 -d lissone/pokedex-web
+If you have <b>Docker</b>, and want to run the container, use the command:
+
+```bash
+# Build the project container
+docker-compose build
+# Up container
+docker-compose up
+```
 
 Install dependencies using:
 
@@ -131,15 +137,6 @@ Install dependencies using:
 yarn
 #or
 npm install
-```
-
-If you have Docker, and want to run the container, use the command:
-
-```bash
-# Build the project container
-docker-compose build
-# Up container
-docker-compose up
 ```
 
 Run api:
