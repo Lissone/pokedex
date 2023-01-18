@@ -11,7 +11,7 @@
 			"email": "leonardo.lissonez@gmail.com"
 		}
 	},
-	"host": "localhost:5000/",
+	"host": "pokedex-api-omega.vercel.app/",
 	"basePath": "api/v1",
 	"tags": [
     {
@@ -24,7 +24,8 @@
 		}
 	],
   "schemes": [
-    "http"
+    "http",
+    "https"
   ],
   "securityDefinitions": {
     "bearerAuth": {

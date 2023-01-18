@@ -7,10 +7,10 @@
   "author": "Leonardo Dias Lissone Santomero <leonardo.lissonez@gmail.com>",
   "private": true,
   "scripts": {
-    "heroku-postbuild": "npm run build",
     "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/external/server.js",
     "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./dist",
-    "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules -r tsconfig-paths/register ."
+    "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules -r tsconfig-paths/register .",
+    "deploy": "vercel deploy --prod"
   },
   "heroku-run-build-script": true,
   "dependencies": {
