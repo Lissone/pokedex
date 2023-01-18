@@ -1,0 +1,19 @@
+version: '3'
+  
+services:
+  api:
+    container_name: api
+    build:
+      dockerfile: Dockerfile
+      context: ./packages/api
+    restart: always
+    ports:
+      - '5000:5000'
+  web: 
+    container_name: web
+    build:
+      dockerfile: Dockerfile
+      context: ./packages/web
+    restart: always
+    ports:
+      - '3000:3000'

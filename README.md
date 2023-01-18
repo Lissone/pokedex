@@ -53,6 +53,10 @@ For the development of this project, a flowchart was created as application docu
 - Firestore
 - Jwt authentication
 - Swagger
+- Eslint
+  - Airbnb-config with another pessoal rules
+  - Import helpers plugin
+- Prettier
 
 ### Front End
 
@@ -61,8 +65,11 @@ For the development of this project, a flowchart was created as application docu
 - StyledComponents
 - Firebase (Social authentication)
 - Nookies
-- ESLint (Airbnb config + pessoal rules)
+- Eslint
+  - Airbnb-config with another pessoal rules
+  - Import helpers plugin
 - Prettier
+- Commitizen
 
 ## Layout
 
@@ -75,14 +82,6 @@ You can clone it on your pc using the command:
 ```bash
 git clone https://github.com/Lissone/pokedex.git
 cd pokedex
-```
-
-Install dependencies using:
-
-```bash
-yarn
-#or
-npm install
 ```
 
 Need to add environment variables in both projects:
@@ -101,7 +100,7 @@ NEXT_PUBLIC_APP_ID=
 
 # DEFAULT
 NEXT_PUBLIC_BASE_URL_API=http://localhost:5000/api/v1
-NEXT_PUBLIC_SECRET_KEY=
+NEXT_PUBLIC_SECRET_KEY=supersecret
 ```
 
 ```bash
@@ -119,9 +118,28 @@ APP_ID=
 BASE_URL_API=https://pokeapi.co/api/v2
 
 # DEFAULT
-APP_URL=http://localhost:5000
 PORT=5000
-SECRET_KEY=
+SECRET_KEY=supersecret
+```
+
+docker build -t lissone/pokedex-web .
+docker run --name pokedex-web -p 3000:3000 -d lissone/pokedex-web
+
+Install dependencies using:
+
+```bash
+yarn
+#or
+npm install
+```
+
+If you have Docker, and want to run the container, use the command:
+
+```bash
+# Build the project container
+docker-compose build
+# Up container
+docker-compose up
 ```
 
 Run api:
